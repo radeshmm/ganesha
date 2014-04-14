@@ -1,0 +1,55 @@
+This procedure will create a 3 node cluster using Amazon EC2.
+
+# Create the ganesha group and open the required ports
+	ec2-add-group ganesha -d "ganesha"
+	ec2-authorize ganesha -p 20000
+	ec2-authorize ganesha -p 20001
+	ec2-authorize ganesha -p 20002
+	ec2-authorize ganesha -p 20003
+	ec2-authorize ganesha -p 20004
+	ec2-authorize ganesha -p 20005
+	ec2-authorize ganesha -p 20006
+	ec2-authorize ganesha -p 22
+
+# Three m3.large instance running Amazon Linux (64-bit)
+	ec2-run-instances -g ganesha --instance-type m3.large -k pstam-keypair ami-2f726546 -z us-east-1c
+	ec2-run-instances -g ganesha --instance-type m3.large -k pstam-keypair ami-2f726546 -z us-east-1c
+	ec2-run-instances -g ganesha --instance-type m3.large -k pstam-keypair ami-2f726546 -z us-east-1c
+
+
+
+# SSH to all three servers with an ssh call similar to this
+	ssh -i id_rsa-pstam-keypair -p 22 ec2-user@ec2-54-225-27-73.compute-1.amazonaws.com
+
+# On each server, download the recent jar and create the config directory and ip_address file
+	curl -O https://github.com/danielcota/ganesha/blob/master/ganesha_all.jar
+
+	mkdir config
+	/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}' > config/ip_address
+
+
+
+# On just the first machine, create the map with an initial replicationFactor of 3 (or whatever)
+	java -cp ganesha_all.jar cota.ganesha.MapServer create 3
+
+# Start Ganesha on the first machine (using heap space here of 6GB - note that 6GB is the minimum)
+	java -cp ganesha_all.jar -Xms6G -Xmx6G cota.ganesha.Ganesha
+
+# On the first machine, edit config/whitelisted_ips to contain the IPs of other machines that will be added
+# 'cat config/ip_address' on the other servers to see what IP addresses they have
+# One per line, for example:
+	10.63.16.13
+	10.147.3.198
+
+
+
+# On the second and third machines, join the cluster using a call similar to:
+	java -cp ganesha_all.jar cota.ganesha.MapServer join 10.146.234.76 5
+
+# The last number specifies the time delay in minutes before the new server begins storing data 
+# on the cluster (5 minutes in the example above).
+# Until that time is met, the previous set of servers from the map will be used.
+# Note that the IP can refer to any server in the cluster (though it will need the whitelisted_ips file)
+
+# Don't forget to start the newly added server
+	java -cp ganesha_all.jar -Xms6G -Xmx6G cota.ganesha.Ganesha
