@@ -19,10 +19,10 @@ This procedure will create a 3 node cluster using Amazon EC2.
 
 
 # SSH to all three servers with an ssh call similar to this
-	ssh -i id_rsa-pstam-keypair -p 22 ec2-user@ec2-54-225-27-73.compute-1.amazonaws.com
+	ssh -i id_rsa-pstam-keypair -p 22 ec2-user@ec2-54-81-145-122.compute-1.amazonaws.com
 
 # On each server, download the recent jar and create the config directory and ip_address file
-	curl -O https://github.com/danielcota/ganesha/blob/master/ganesha_all.jar
+	curl -O https://github.com/downloads/danielcota/ganesha/blob/master/ganesha_all.jar
 
 	mkdir config
 	/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}' > config/ip_address

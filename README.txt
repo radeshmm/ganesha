@@ -35,7 +35,7 @@
 ----- INSTALLATION (Linux) -----
 
 # On each server, download the recent jar and create the config directory and ip_address file
-   curl -O https://github.com/danielcota/ganesha/blob/master/ganesha_all.jar
+   curl -O https://github.com/downloads/danielcota/ganesha/blob/master/ganesha_all.jar
    
    mkdir config
    /sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}' > config/ip_address
