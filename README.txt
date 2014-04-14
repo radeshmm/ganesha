@@ -56,11 +56,11 @@ On a five node cluster:
 Keep in mind that all reads/writes are checked with all relevant servers for consistency and correctness (using timestamps/checksums).
 
 You can repeat these tests by running:
-	java -cp ../ganesha_all.jar cota.ganeshatest.Test gen
+	java -cp ganesha_all.jar cota.ganeshatest.Test gen
 	
-	java -cp ../ganesha_all.jar cota.ganeshatest.Test writing
+	java -cp ganesha_all.jar cota.ganeshatest.Test writing
 
-	java -cp ../ganesha_all.jar cota.ganeshatest.Test reading
+	java -cp ganesha_all.jar cota.ganeshatest.Test reading
 
 
 
