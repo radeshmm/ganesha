@@ -35,25 +35,28 @@
 ----- INSTALLATION (Linux) -----
 
 # On each server, download the recent jar and create the config directory and ip_address file
-   curl -O https://github.com/downloads/danielcota/ganesha/blob/master/ganesha_all.jar
+   sudo yum install git
+
+   git clone https://github.com/danielcota/ganesha
+   cd ganesha
    
    mkdir config
    /sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}' > config/ip_address
 
 
 
-# On just the first machine in the cluster, create the cluster map with an initial replicationFactor of 3 (or whatever)
-   java -cp ganesha_all.jar cota.ganesha.MapServer create 3
-   
-# Start Ganesha on the first machine (using heap space here of 6GB - note that 6GB is the minimum)
-   java -cp ganesha_all.jar -Xms6G -Xmx6G cota.ganesha.Ganesha
-
 # On the first machine, edit config/whitelisted_ips to contain the IPs of other machines that will be added
 # 'cat config/ip_address' on the other servers to see what IP addresses they have
 # One per line, for example:
    10.63.16.13
    10.147.3.198
+
+# On the first machine in the cluster, create the cluster map with an initial replicationFactor of 3 (or whatever)
+   java -cp ganesha_all.jar cota.ganesha.MapServer create 3
    
+# Start Ganesha on the first machine (using heap space here of 6GB - note that 6GB is the minimum)
+   java -cp ganesha_all.jar -Xms6G -Xmx6G cota.ganesha.Ganesha
+
 
 
 # On additional machines, join the cluster using a call similar to:
@@ -64,7 +67,7 @@
 # Until that time, the previous set of servers from the map will be used.
 # Note that the IP can refer to any server in the cluster (though it will need the whitelisted_ips file)
 
-# Don't forget to start the newly added server
+# Don't forget to start the newly added servers
    java -cp ganesha_all.jar -Xms6G -Xmx6G cota.ganesha.Ganesha
 
 
@@ -199,4 +202,4 @@ A note about name based objects: anytime you need to reference an object that re
 
 ----- RUNNING ON AMAZON EC2 CLOUD -----
 
-   Check out examples/ec2_cloud.txt to see how to create 3 node cluster using Amazon EC2.
+   Check out examples/ec2_cloud.txt to see how to prepare a 3 node cluster on Amazon EC2.
