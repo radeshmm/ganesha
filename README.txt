@@ -2,7 +2,7 @@
 
    Ganesha is a sleek NoSQL database written in Java.
 
-   It requires no external libraries and provides synchronized binary, object, object attribute, and list based storage across a self-healing redundant cluster of server nodes. All required source is provided here.
+   It requires no external libraries and provides synchronized binary, object/attribute, and list based storage across a self-healing redundant cluster of server nodes. All required source is provided here.
 
    Ganesha has been used in production since August 2013 on a 5 server cluster by DrawCast, a social network for artists (for iOS and Android).  The cluster currently processes an average of 3000 database API calls per second, or 8 billion calls per month with an average load of .25 for each server (standard deviation of .6).
 
