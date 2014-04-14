@@ -12,9 +12,9 @@ This procedure will create a 3 node cluster using Amazon EC2.
    ec2-authorize ganesha -p 22
 
 # Three m3.large instance running Amazon Linux (64-bit)
-   ec2-run-instances -g ganesha --instance-type m3.large -k pstam-keypair ami-2f726546 -z us-east-1c
-   ec2-run-instances -g ganesha --instance-type m3.large -k pstam-keypair ami-2f726546 -z us-east-1c
-   ec2-run-instances -g ganesha --instance-type m3.large -k pstam-keypair ami-2f726546 -z us-east-1c
+   ec2-run-instances -g ganesha --instance-type m3.xlarge -k pstam-keypair ami-2f726546 -z us-east-1c
+   ec2-run-instances -g ganesha --instance-type m3.xlarge -k pstam-keypair ami-2f726546 -z us-east-1c
+   ec2-run-instances -g ganesha --instance-type m3.xlarge -k pstam-keypair ami-2f726546 -z us-east-1c
 
 
 From here, follow the INSTALLATION instructions seen in README.TXT

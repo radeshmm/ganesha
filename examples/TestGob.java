@@ -23,7 +23,7 @@ public class TestGob extends Gob
 
 
 	// Used for creating new objects
-	private TestGob( String name0 ) throws Throwable
+	public TestGob( String name0 ) throws Throwable
 		{
 		super( GOB_TYPE );
 

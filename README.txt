@@ -4,8 +4,6 @@
 
    It requires no external libraries and provides synchronized binary, object/attribute, and list based storage across a self-healing redundant cluster of server nodes. All required source is provided here.
 
-   Ganesha has been used in production since August 2013 on a 5 server cluster by DrawCast, a social network for artists (for iOS and Android).  The cluster currently processes an average of 3000 database API calls per second, or 8 billion calls per month with an average load of .25 for each server (standard deviation of .6).
-
 
 
 ----- FEATURES -----
@@ -32,6 +30,40 @@
 
    
 
+----- BENCHMARKS -----
+
+Ganesha has been used in production since August 2013 on a 5 server cluster by DrawCast, a social network for artists (for iOS and Android).  That cluster currently processes an average of 3000 database API calls per second, or 8 billion calls per month with an average load of .25 for each server (standard deviation of .6).
+
+Here are some benchmarks running on Amazon EC2 using m3.xlarge nodes:
+
+On a single node cluster:
+   1-way-replicated writes: ~7000 writes/s
+   1-way-replicated reads: ~31000 reads/s
+
+On a three node cluster:
+   3-way-replicated writes: ~23000 writes/s
+   3-way-replicated reads: ~42000 reads/s
+
+On a five node cluster:
+   3-way-replicated writes: ~27000 writes/s
+   3-way-replicated reads: ~44000 reads/s
+
+On a five node cluster:
+   5-way-replicated writes: ~15000 writes/s
+   5-way-replicated reads: ~42000 reads/s
+
+
+Keep in mind that all reads/writes are checked with all relevant servers for consistency and correctness (using timestamps/checksums).
+
+You can repeat these tests by running:
+	java -cp ../ganesha_all.jar cota.ganeshatest.Test gen
+	
+	java -cp ../ganesha_all.jar cota.ganeshatest.Test writing
+
+	java -cp ../ganesha_all.jar cota.ganeshatest.Test reading
+
+
+
 ----- INSTALLATION (Linux) -----
 
 # On each server, download the recent jar and create the config directory and ip_address file
@@ -42,6 +74,8 @@
    
    mkdir config
    /sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}' > config/ip_address
+
+   cat config/ip_address
 
 
 
@@ -165,7 +199,10 @@ Test via TestGob class
 
 ALL objects are stored by long ids, but it is sometimes necessary to store them by names as well. 
    
-Named objects are stored within a Workspace/Table/Name hierarchy. The workspaces allow the same Gob classes to be used with different applications.  For example you might have Friendland/User/Daniel object and ChatWorld/User/Daniel object. These two "keys" refer to completely different objects contained within two different workspaces.
+Named objects employ a workspace/table/name mechanism to generate a unique key. The workspaces allow the same Gob classes to be used with different applications.  For example you might have Friendland/User/Daniel object and ChatWorld/User/Daniel object. These two "keys" refer to completely different objects contained within two different workspaces.
+
+Name objects (like all data stored in Ganesha) also have a corresponding long id.  You can find it using the call:
+   long id = Translator.translate( workspace, table, name);
    
 examples/TestGob2.java shows you what you need to get name based object references to work correctly. 
 
