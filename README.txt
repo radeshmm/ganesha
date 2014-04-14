@@ -36,31 +36,32 @@ Ganesha has been used in production since August 2013 on a 5 server cluster by D
 
 Here are some benchmarks running on Amazon EC2 using m3.xlarge nodes:
 
-On a single node cluster:
-   1-way-replicated writes: ~7000 writes/s
-   1-way-replicated reads: ~31000 reads/s
+    On a single node cluster:
+       1-way-replicated writes: ~7000 writes/s
+       1-way-replicated reads: ~31000 reads/s
 
-On a three node cluster:
-   3-way-replicated writes: ~23000 writes/s
-   3-way-replicated reads: ~42000 reads/s
+    On a three node cluster:
+       3-way-replicated writes: ~23000 writes/s
+       3-way-replicated reads: ~42000 reads/s
 
-On a five node cluster:
-   3-way-replicated writes: ~27000 writes/s
-   3-way-replicated reads: ~44000 reads/s
+    On a five node cluster:
+       3-way-replicated writes: ~27000 writes/s
+       3-way-replicated reads: ~44000 reads/s
 
-On a five node cluster:
-   5-way-replicated writes: ~15000 writes/s
-   5-way-replicated reads: ~42000 reads/s
+    On a five node cluster:
+       5-way-replicated writes: ~15000 writes/s
+       5-way-replicated reads: ~42000 reads/s
 
 
 Keep in mind that all reads/writes are checked with all relevant servers for consistency and correctness (using timestamps/checksums).
 
 You can repeat these tests by running:
-	java -cp ganesha_all.jar cota.ganeshatest.Test gen
-	
-	java -cp ganesha_all.jar cota.ganeshatest.Test writing
 
-	java -cp ganesha_all.jar cota.ganeshatest.Test reading
+   java -cp ganesha_all.jar cota.ganeshatest.Test gen
+	
+   java -cp ganesha_all.jar cota.ganeshatest.Test writing
+
+   java -cp ganesha_all.jar cota.ganeshatest.Test reading
 
 
 
