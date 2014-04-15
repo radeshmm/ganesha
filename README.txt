@@ -12,7 +12,7 @@
 
    Auto-Healing Data - any time a piece of data is accessed, any server that doesn't have the most recent copy of the data will be updated.  Also, servers keep logs of failed data updates (for example if another server was temporarily down) so that the update can be sent later on.
    
-   Built in Object Support - in addition to strictly storing bytes, a robust object architecture is in place which provides a built in mechanism for storing and retrieving lists, ints, longs, bytes, and strings from and to objects.
+   Built in Object Support - in addition to strictly storing bytes, a robust object architecture is in place which provides a built in mechanism for storing and retrieving lists, ints, longs, bytes, and strings from and to objects. Objects and lists can be nested as needed.
 
    Checksum/Timestamp Consistency Checks - both checksums and timestamps are used to ensure that all relevant servers have the correct copy of a given piece of data.   
    
@@ -24,7 +24,7 @@
    
    Support for Growable Clusters - live clusters can be grown easily, have no inherent limit in size and require no additional work or data splitting when new nodes are added.
    
-   Optional In-Memory-Only Data - useful for demanding tasks such as news feeds.  Unlike normally handled data, no disk usage of any kind is used for the in-memory based data. In-memory-only data, like normal data, is self-healing and persistent as long as all servers holding a piece of data are not simultaneously down.
+   Optional In-Memory-Only Data - useful for demanding tasks such as news feeds.  Unlike normally handled data, no disk usage of any kind is used for in-memory based data. In-memory-only data, like normal data, is self-healing and persistent as long as all servers holding a piece of data are not simultaneously down.
    
    Long Integer IDs for Data - long integer ids are used for simplicity and efficiency, while at the same time providing built in timestamps and server-load statistics using a novel id-generation technique.
 
@@ -72,7 +72,7 @@
 
 
 
-# The replication factor for newly added data can be changed using something like the following call:
+# The replication factor for newly added data can be changed using the following call:
    java -cp ganesha_all.jar cota.ganesha.MapServer use_rf 2 5
    
    1st arg: replication factor
@@ -117,7 +117,7 @@ You can repeat these tests by running:
 
 ----- BASIC API USAGE -----
 
-Ganesha provides a direct API for bytes and list manipulation.  Objects will be discussed below.
+Ganesha provides a direct API for byte array storage and list manipulation.  Objects will be discussed below.
 
 
    // BYTES
@@ -194,13 +194,13 @@ ALL objects are stored by long ids, but it is sometimes necessary to refer to th
    
 Named objects employ a workspace/table/name mechanism to generate a unique key. The workspaces allow the same Gob classes to be used with different applications.  For example you might have Friendland/User/Daniel object and ChatWorld/User/Daniel object. These two "keys" refer to completely different objects contained within two different workspaces.
 
-You can find the long id corresponding to a named object using the following:
+If needed, you can find the long id corresponding to a named object using the following:
    long id = Translator.translate( workspace, table, name );
    
 
 Example:   
 
-   // Store the objects by name
+   // Create the objects by name
    Gob sun = new Gob( "galaxy", "stars", "sun" );
    sun.put( "color", "orangeish" );
    sun.put( "weight", 3300000000000L );
@@ -209,7 +209,7 @@ Example:
    otherSun.put( "color", "red" );
    otherSun.put( "weight", 10000000000L );
 
-	// Modification overwrite as expected
+	// Modifications overwrite as expected
 	sun.put( "color", "orange" );
    
 
