@@ -1,9 +1,10 @@
 package cota.ganeshatest;
 
+import cota.ganesha.Gob;
 import cota.ganesha.MapServer;
 import cota.io.InStream;
 import cota.io.OutStream;
-import cota.util.Fashtable_lo;
+import cota.util.Hashtable_lo;
 import cota.util.Queue;
 
 
@@ -13,7 +14,7 @@ public class Test implements Runnable
 
 	static int count = 0;
 
-	Fashtable_lo f = new Fashtable_lo();
+	Hashtable_lo f = new Hashtable_lo();
 
 	static Queue gobs = new Queue();
 	static int totalCount = 0;
@@ -37,16 +38,16 @@ public class Test implements Runnable
 			{
 			for ( int i = 0; i < 10000000; i++ )
 				{
-				TestGob gob = null;
+				Gob gob = null;
 				synchronized ( gobs )
 					{
-					gob = (TestGob) gobs.elementAt( (int) ( Math.random() * gobs.size() ) );
+					gob = (Gob) gobs.elementAt( (int) ( Math.random() * gobs.size() ) );
 					}
 
 				if ( reading )
-					gob = new TestGob( gob.id );
+					gob = new Gob( gob.id );
 				else
-					gob.putInt( TestGob.seenCount, 0 );
+					gob.put( "seenCount", 0 );
 
 				totalCount++;
 
@@ -79,7 +80,7 @@ public class Test implements Runnable
 
 				for ( int i = 0; i < 10000; i++ )
 					{
-					TestGob gob = new TestGob( "" + i );
+					Gob gob = new Gob();
 
 					out.write8Bytes( gob.id );
 
@@ -98,7 +99,7 @@ public class Test implements Runnable
 				{
 				long id = in.read8Bytes();
 
-				TestGob gob = new TestGob( id );
+				Gob gob = new Gob( id );
 				gobs.addObject( gob );
 				}
 

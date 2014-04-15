@@ -1,16 +1,16 @@
 package cota.util;
 
-public class FashEntry_si
+public class HashEntry_si
 	{
 	public String key = null;
 	public int value = 0;
 
-	public FashEntry_si next = null;
+	public HashEntry_si next = null;
 
 	public int hash = 0;
 
 
-	public FashEntry_si( String key, int value, int hash )
+	public HashEntry_si( String key, int value, int hash )
 		{
 		this.key = key;
 		this.value = value;

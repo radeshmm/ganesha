@@ -40,7 +40,7 @@ public class LRU_ib
 	long currentCacheSize = 0;
 	long maxCacheSize = 0;
 
-	Fashtable_io f = new Fashtable_io();
+	Hashtable_io f = new Hashtable_io();
 	CacheObject newest = null;
 	CacheObject oldest = null;
 

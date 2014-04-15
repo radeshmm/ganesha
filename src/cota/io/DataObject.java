@@ -7,8 +7,8 @@ import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.util.Date;
 
-import cota.util.FashEntry_so;
-import cota.util.Fashtable_so;
+import cota.util.HashEntry_so;
+import cota.util.Hashtable_so;
 import cota.util.PairSO;
 import cota.util.Queue;
 import cota.util.Util;
@@ -41,7 +41,7 @@ public class DataObject
 	{
 	private static final String OTHERNET__TYPE_SUFFIX = "__@!!@@!";
 
-	Fashtable_so parts = new Fashtable_so();
+	Hashtable_so parts = new Hashtable_so();
 
 	boolean outputBytes = true;
 
@@ -98,7 +98,7 @@ public class DataObject
 		// We've read in the usual JSON object
 		// Now read the actualy byte[]s that currently are associated with
 		// identifiers with byte[] stubs
-		Fashtable_so bytesF = readBytes( in );
+		Hashtable_so bytesF = readBytes( in );
 
 		o.fillInByteStubs( bytesF );
 
@@ -108,7 +108,7 @@ public class DataObject
 
 	public void reset()
 		{
-		parts = new Fashtable_so();
+		parts = new Hashtable_so();
 
 		outputBytes = false;
 		}
@@ -116,11 +116,11 @@ public class DataObject
 
 	public void makeAttributeNamesLowerCase()
 		{
-		FashEntry_so[] entries = parts.returnArrayOfEntries();
+		HashEntry_so[] entries = parts.returnArrayOfEntries();
 
 		for ( int i = 0; i < entries.length; i++ )
 			{
-			FashEntry_so e = entries[ i ];
+			HashEntry_so e = entries[ i ];
 
 			String key = e.key;
 			Object value = e.value;
@@ -182,9 +182,9 @@ public class DataObject
 	// This is sort of a hack
 	// Rather then have the actual bytes of the byte[] with the JSON object
 	// itself, they follow after the actual JSON object
-	public void fillInByteStubs( Fashtable_so bytesF ) throws Throwable
+	public void fillInByteStubs( Hashtable_so bytesF ) throws Throwable
 		{
-		FashEntry_so[] entries = parts.returnArrayOfEntries();
+		HashEntry_so[] entries = parts.returnArrayOfEntries();
 
 		for ( int i = 0; i < entries.length; i++ )
 			{
@@ -208,9 +208,9 @@ public class DataObject
 	// This is sort of a hack
 	// Rather then have the actual bytes of the byte[] with the JSON object
 	// itself, they follow after the actual JSON object
-	public void fillInByteStubs( String identifier0, Fashtable_so bytesF ) throws Throwable
+	public void fillInByteStubs( String identifier0, Hashtable_so bytesF ) throws Throwable
 		{
-		FashEntry_so[] entries = parts.returnArrayOfEntries();
+		HashEntry_so[] entries = parts.returnArrayOfEntries();
 
 		for ( int i = 0; i < entries.length; i++ )
 			{
@@ -230,9 +230,9 @@ public class DataObject
 
 
 	// This is where the bytes located after the JSON object are actually read
-	public static Fashtable_so readBytes( InStream in ) throws Throwable
+	public static Hashtable_so readBytes( InStream in ) throws Throwable
 		{
-		Fashtable_so f = new Fashtable_so();
+		Hashtable_so f = new Hashtable_so();
 
 		in.skipWhitespace( true );
 		String num0 = in.readLine();
@@ -282,7 +282,7 @@ public class DataObject
 		out.writeByte( '{' );
 		out.writeByte( '\n' );
 
-		FashEntry_so[] entries = parts.returnArrayOfEntries();
+		HashEntry_so[] entries = parts.returnArrayOfEntries();
 
 		for ( int i = 0; i < entries.length; i++ )
 			{
@@ -2225,7 +2225,7 @@ public class DataObject
 
 	public boolean containsRawBytes()
 		{
-		FashEntry_so[] entries = parts.returnArrayOfEntries();
+		HashEntry_so[] entries = parts.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
 			DataValue dv = (DataValue) entries[ i ].value;
@@ -2238,9 +2238,9 @@ public class DataObject
 		}
 
 
-	public Fashtable_so returnRawBytes()
+	public Hashtable_so returnRawBytes()
 		{
-		Fashtable_so f = new Fashtable_so();
+		Hashtable_so f = new Hashtable_so();
 
 		addRawBytes( "", f );
 
@@ -2248,9 +2248,9 @@ public class DataObject
 		}
 
 
-	public void addRawBytes( String path, Fashtable_so f )
+	public void addRawBytes( String path, Hashtable_so f )
 		{
-		FashEntry_so[] entries = parts.returnArrayOfEntries();
+		HashEntry_so[] entries = parts.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
 			DataValue dv = (DataValue) entries[ i ].value;
@@ -2273,10 +2273,10 @@ public class DataObject
 		{
 		StringBuffer sb = new StringBuffer();
 
-		FashEntry_so[] entries = parts.returnArrayOfEntries();
+		HashEntry_so[] entries = parts.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
-			FashEntry_so fe = entries[ i ];
+			HashEntry_so fe = entries[ i ];
 
 			if ( i != 0 )
 				sb.append( "&" );
@@ -2294,10 +2294,10 @@ public class DataObject
 		StringBuffer sb = new StringBuffer();
 		sb.append( "Cookie: " );
 
-		FashEntry_so[] entries = parts.returnArrayOfEntries();
+		HashEntry_so[] entries = parts.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
-			FashEntry_so fe = entries[ i ];
+			HashEntry_so fe = entries[ i ];
 
 			if ( i > 0 )
 				sb.append( "; " );
@@ -2316,10 +2316,10 @@ public class DataObject
 		{
 		StringBuffer sb = new StringBuffer();
 
-		FashEntry_so[] entries = parts.returnArrayOfEntries();
+		HashEntry_so[] entries = parts.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
-			FashEntry_so fe = entries[ i ];
+			HashEntry_so fe = entries[ i ];
 
 			if ( i != 0 )
 				sb.append( "&" );
@@ -2331,7 +2331,7 @@ public class DataObject
 		}
 
 
-	public Fashtable_so returnParts()
+	public Hashtable_so returnParts()
 		{
 		return parts;
 		}

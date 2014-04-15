@@ -43,7 +43,7 @@ public class LRU_sl
 	long currentCacheSize = 0;
 	long maxCacheSize = 0;
 
-	Fashtable_so f = new Fashtable_so();
+	Hashtable_so f = new Hashtable_so();
 	CacheObject newest = null;
 	CacheObject oldest = null;
 

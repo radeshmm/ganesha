@@ -1,6 +1,6 @@
 package cota.io;
 
-import cota.util.Fashtable_so;
+import cota.util.Hashtable_so;
 import cota.util.PairSO;
 import cota.util.Queue;
 
@@ -201,7 +201,7 @@ public class DataValue
 
 	// Check to see if the DataValue needs to have some bytes added, or if any of its children do (for sub DataObjects)
 	// Arrays can't currently have byte[] children directly, but must pack them into DataObjects
-	public void fillInByteStubs( String identifier, Fashtable_so bytesF ) throws Throwable
+	public void fillInByteStubs( String identifier, Hashtable_so bytesF ) throws Throwable
 		{
 		switch ( type )
 			{

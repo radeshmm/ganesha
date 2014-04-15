@@ -130,21 +130,8 @@ public class Ganesha
 		}
 
 
-	void ______INTERNAL_ATTRIBUTE_API________()
+	void ______INTERNAL_ATTRIBUTE_API_FOR_STRICT_GOBS________()
 		{
-		}
-
-
-	public static byte[] putLong( long id, int attribute, long n ) throws Throwable
-		{
-		Message m = new Message();
-		m.write8Bytes( id );
-		m.write4Bytes( attribute );
-		m.write8Bytes( n );
-
-		Message r = ObjectServer.sendRequest( ObjectServer.SET_LONG, m );
-
-		return r.readBytes();
 		}
 
 
@@ -155,7 +142,20 @@ public class Ganesha
 		m.write4Bytes( attribute );
 		m.write4Bytes( n );
 
-		Message r = ObjectServer.sendRequest( ObjectServer.SET_INTEGER, m );
+		Message r = ObjectServer.sendRequest( ObjectServer.SET_INTEGER_STRICT, m );
+
+		return r.readBytes();
+		}
+
+
+	public static byte[] putLong( long id, int attribute, long n ) throws Throwable
+		{
+		Message m = new Message();
+		m.write8Bytes( id );
+		m.write4Bytes( attribute );
+		m.write8Bytes( n );
+
+		Message r = ObjectServer.sendRequest( ObjectServer.SET_LONG_STRICT, m );
 
 		return r.readBytes();
 		}
@@ -168,7 +168,7 @@ public class Ganesha
 		m.write4Bytes( attribute );
 		m.writeString( s );
 
-		Message r = ObjectServer.sendRequest( ObjectServer.SET_STRING, m );
+		Message r = ObjectServer.sendRequest( ObjectServer.SET_STRING_STRICT, m );
 
 		return r.readBytes();
 		}
@@ -180,7 +180,7 @@ public class Ganesha
 		m.write8Bytes( id );
 		m.write4Bytes( attribute );
 
-		Message r = ObjectServer.sendRequest( ObjectServer.INCREMENT, m );
+		Message r = ObjectServer.sendRequest( ObjectServer.INCREMENT_STRICT, m );
 
 		return r.readBytes();
 		}
@@ -191,6 +191,74 @@ public class Ganesha
 		Message m = new Message();
 		m.write8Bytes( id );
 		m.write4Bytes( attribute );
+
+		Message r = ObjectServer.sendRequest( ObjectServer.DECREMENT_STRICT, m );
+
+		return r.readBytes();
+		}
+
+
+	void ______INTERNAL_ATTRIBUTE_API_FOR_GOBS________()
+		{
+		}
+
+
+	protected static byte[] putInt( long id, String attribute, int n ) throws Throwable
+		{
+		Message m = new Message();
+		m.write8Bytes( id );
+		m.writeString( attribute );
+		m.write4Bytes( n );
+
+		Message r = ObjectServer.sendRequest( ObjectServer.SET_INTEGER, m );
+
+		return r.readBytes();
+		}
+
+
+	public static byte[] putLong( long id, String attribute, long n ) throws Throwable
+		{
+		Message m = new Message();
+		m.write8Bytes( id );
+		m.writeString( attribute );
+		m.write8Bytes( n );
+
+		Message r = ObjectServer.sendRequest( ObjectServer.SET_LONG, m );
+
+		return r.readBytes();
+		}
+
+
+	protected static byte[] putString( long id, String attribute, String s ) throws Throwable
+		{
+		Message m = new Message();
+		m.write8Bytes( id );
+		m.writeString( attribute );
+		m.writeString( s );
+
+		Message r = ObjectServer.sendRequest( ObjectServer.SET_STRING, m );
+
+		return r.readBytes();
+		}
+
+
+	protected static byte[] increment( long id, String attribute ) throws Throwable
+		{
+		Message m = new Message();
+		m.write8Bytes( id );
+		m.writeString( attribute );
+
+		Message r = ObjectServer.sendRequest( ObjectServer.INCREMENT, m );
+
+		return r.readBytes();
+		}
+
+
+	protected static byte[] decrement( long id, String attribute ) throws Throwable
+		{
+		Message m = new Message();
+		m.write8Bytes( id );
+		m.writeString( attribute );
 
 		Message r = ObjectServer.sendRequest( ObjectServer.DECREMENT, m );
 
@@ -375,9 +443,31 @@ public class Ganesha
 		}
 
 
+	public static long addObject( StrictGob gob ) throws Throwable
+		{
+		long id = Ganesha.newID();
+		gob.id = id;
+
+		Ganesha.putObjectBytes( id, gob.returnBytes() );
+
+		return id;
+		}
+
+
 	public static long addObject( Gob gob ) throws Throwable
 		{
 		long id = Ganesha.newID();
+		gob.id = id;
+
+		Ganesha.putObjectBytes( id, gob.returnBytes() );
+
+		return id;
+		}
+
+
+	public static long addObject( String workspace, String table, String name, StrictGob gob ) throws Throwable
+		{
+		long id = Translator.translate( workspace, table, name, true );
 		gob.id = id;
 
 		Ganesha.putObjectBytes( id, gob.returnBytes() );
@@ -594,12 +684,6 @@ public class Ganesha
 		}
 
 
-	public static void appendID( Gob gob, long newObjectID ) throws Throwable
-		{
-		appendID( gob.id, newObjectID );
-		}
-
-
 	public static void removeID( long id, long idToRemove ) throws Throwable
 		{
 		Message m = new Message();
@@ -627,12 +711,6 @@ public class Ganesha
 		m.write8Bytes( idToUndelete );
 
 		BytesServer.sendRequest( BytesServer.UNDELETE_ID, m );
-		}
-
-
-	public static void undeleteID( Gob gob, long idToUndelete ) throws Throwable
-		{
-		undeleteID( gob.id, idToUndelete );
 		}
 
 

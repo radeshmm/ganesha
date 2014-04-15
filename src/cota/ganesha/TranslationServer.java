@@ -12,10 +12,10 @@ import cota.networking.ConnectionPool;
 import cota.networking.TCPServer;
 import cota.objectstore.HashStoreServer;
 import cota.util.ErrorHandler;
-import cota.util.FashEntry_li;
-import cota.util.FashEntry_sl;
-import cota.util.Fashtable_li;
-import cota.util.Fashtable_sl;
+import cota.util.HashEntry_li;
+import cota.util.HashEntry_sl;
+import cota.util.Hashtable_li;
+import cota.util.Hashtable_sl;
 import cota.util.LRU_sl;
 import cota.util.LRU_so;
 import cota.util.PairLI;
@@ -98,7 +98,7 @@ public class TranslationServer extends TCPServer
 	// Returns PairLI( objectID, count )
 	private static PairLI checkTranslationConsistency( Queue ids )
 		{
-		Fashtable_li f = new Fashtable_li();
+		Hashtable_li f = new Hashtable_li();
 
 		for ( int i = 0; i < ids.size(); i++ )
 			{
@@ -107,7 +107,7 @@ public class TranslationServer extends TCPServer
 			if ( id != 0 ) // Don't include non-existent translations
 				{
 				int count = f.get( id );
-				if ( count == Fashtable_li.NOT_FOUND )
+				if ( count == Hashtable_li.NOT_FOUND )
 					f.put( id, 1 );
 				else
 					f.put( id, count + 1 );
@@ -118,10 +118,10 @@ public class TranslationServer extends TCPServer
 		int highestCount = 0;
 		long bestID = 0;
 
-		FashEntry_li[] entries = f.returnArrayOfEntries();
+		HashEntry_li[] entries = f.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
-			FashEntry_li entry = entries[ i ];
+			HashEntry_li entry = entries[ i ];
 
 			if ( entry.value > highestCount )
 				{
@@ -151,10 +151,10 @@ public class TranslationServer extends TCPServer
 			int timeBack = 0;
 
 			long correctID = -1;
-			Fashtable_sl mostRecentSetF = null;
+			Hashtable_sl mostRecentSetF = null;
 			Queue serversToRemove = null;
 
-			Fashtable_sl cache = new Fashtable_sl();
+			Hashtable_sl cache = new Hashtable_sl();
 
 			while ( true )
 				{
@@ -182,7 +182,7 @@ public class TranslationServer extends TCPServer
 					if ( !MapServer.serverIsDown( ip ) )
 						{
 						long id = cache.get( ip );
-						if ( id == Fashtable_sl.NOT_FOUND )
+						if ( id == Hashtable_sl.NOT_FOUND )
 							{
 							// Non existent translations show up with a value of 0
 							id = HashStoreServer.getTranslation( ip, key );
@@ -213,7 +213,7 @@ public class TranslationServer extends TCPServer
 					else
 						{
 						// Looks like there was a problem within the recent set
-						mostRecentSetF = new Fashtable_sl();
+						mostRecentSetF = new Hashtable_sl();
 						serversToRemove = new Queue();
 
 						for ( int i = 0; i < set.size(); i++ )
@@ -241,7 +241,7 @@ public class TranslationServer extends TCPServer
 						if ( id != 0 )
 							{
 							// Make sure the ip is not in the most recent set
-							if ( mostRecentSetF.get( ip ) == Fashtable_sl.NOT_FOUND )
+							if ( mostRecentSetF.get( ip ) == Hashtable_sl.NOT_FOUND )
 								serversToRemove.addObject( ip );
 							}
 						}
@@ -256,12 +256,12 @@ public class TranslationServer extends TCPServer
 				}
 
 			// Update the recent servers
-			FashEntry_sl[] entries = mostRecentSetF.returnArrayOfEntries();
+			HashEntry_sl[] entries = mostRecentSetF.returnArrayOfEntries();
 
 			boolean errorSeen = false;
 			for ( int i = 0; i < entries.length; i++ )
 				{
-				FashEntry_sl entry = entries[ i ];
+				HashEntry_sl entry = entries[ i ];
 
 				try
 					{

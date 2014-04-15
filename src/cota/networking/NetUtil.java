@@ -5,7 +5,7 @@ import java.util.Date;
 
 import cota.io.InStream;
 import cota.io.OutStream;
-import cota.util.Fashtable_so;
+import cota.util.Hashtable_so;
 import cota.util.Queue;
 import cota.util.StringUtils;
 
@@ -97,9 +97,9 @@ public class NetUtil
 
 
 	// Find any cookies in the response
-	public static Fashtable_so findClientCookies( Queue header )
+	public static Hashtable_so findClientCookies( Queue header )
 		{
-		Fashtable_so results = new Fashtable_so();
+		Hashtable_so results = new Hashtable_so();
 		try
 			{
 			// check for cookies
@@ -250,9 +250,9 @@ public class NetUtil
 
 
 	// Returns a Fashtable (name, value) of arguments from the request
-	public static Fashtable_so extractURLArgs( String request ) throws Throwable
+	public static Hashtable_so extractURLArgs( String request ) throws Throwable
 		{
-		Fashtable_so args = new Fashtable_so();
+		Hashtable_so args = new Hashtable_so();
 
 		int questionIndex = request.indexOf( "?" );
 

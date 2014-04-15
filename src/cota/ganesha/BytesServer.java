@@ -11,8 +11,8 @@ import cota.networking.ConnectionPool;
 import cota.networking.TCPServer;
 import cota.objectstore.HashStoreServer;
 import cota.util.ErrorHandler;
-import cota.util.Fashtable_lo;
-import cota.util.Fashtable_so;
+import cota.util.Hashtable_lo;
+import cota.util.Hashtable_so;
 import cota.util.LRU_lbt;
 import cota.util.LRU_lo;
 import cota.util.PairBL;
@@ -233,7 +233,7 @@ public class BytesServer extends TCPServer
 
 	private static byte[] appendIDs( long id, Queue q ) throws Throwable
 		{
-		Fashtable_lo f = new Fashtable_lo();
+		Hashtable_lo f = new Hashtable_lo();
 		for ( int j = 0; j < q.size(); j++ )
 			{
 			long objectIDToAppend = (Long) q.elementAt( j );
@@ -247,7 +247,7 @@ public class BytesServer extends TCPServer
 
 		int numObjects = m.read4Bytes( 0 );
 
-		Fashtable_lo undeletedF = new Fashtable_lo();
+		Hashtable_lo undeletedF = new Hashtable_lo();
 
 		// First undelete any ids that were deleted
 		for ( int i = 0; i < numObjects; i++ )
@@ -577,7 +577,7 @@ public class BytesServer extends TCPServer
 
 		//		System.out.println( "Not using the cache!!!!: " + objectID );
 
-		Fashtable_so f = new Fashtable_so();
+		Hashtable_so f = new Hashtable_so();
 		long newestTimestamp = 0;
 		TriOLI newestT = null;
 

@@ -9,16 +9,16 @@ public class ConnectionPool
 	static final int MAX_CONNECTION_AGE = 1000 * 60 * 5;
 
 	// Maps ip:port to a Queue of Connections
-	static Fashtable_so connections = null;
+	static Hashtable_so connections = null;
 
-	static Fashtable_sl lastConnectionTimes = null;
+	static Hashtable_sl lastConnectionTimes = null;
 
 	static int numFreeConnections = 0;
 
 	static
 		{
-		connections = new Fashtable_so();
-		lastConnectionTimes = new Fashtable_sl();
+		connections = new Hashtable_so();
+		lastConnectionTimes = new Hashtable_sl();
 		}
 
 
@@ -27,7 +27,7 @@ public class ConnectionPool
 		long earliestTime = Long.MAX_VALUE;
 		String connectionKey = null;
 
-		FashEntry_sl[] entries = lastConnectionTimes.returnArrayOfEntries();
+		HashEntry_sl[] entries = lastConnectionTimes.returnArrayOfEntries();
 		for ( int i = 0; i <= entries.length; i++ )
 			{
 			long lastConnectionTime = entries[ i ].value;
@@ -120,7 +120,7 @@ public class ConnectionPool
 
 	public static void closeAllConnections()
 		{
-		FashEntry_so[] entries = connections.returnArrayOfEntries();
+		HashEntry_so[] entries = connections.returnArrayOfEntries();
 
 		for ( int i = 0; i <= entries.length; i++ )
 			{

@@ -112,6 +112,12 @@ public class Translator
 		}
 
 
+	public static long translate( String workspace, String tableName, String name ) throws Throwable
+		{
+		return translate( workspace, tableName, name, false );
+		}
+
+
 	// Because iOS can introduce weird unicode characters, we need to check for 
 	// translations that were made using iOS 6 (without the weird characters as well)
 	public static long translate( String workspace, String tableName, String name, boolean createNew ) throws Throwable

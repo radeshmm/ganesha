@@ -1,11 +1,13 @@
 package cota.util;
 
-public class Fashtable_li
+//A fast, memory efficient Hashtable mapping long->int
+
+public class Hashtable_li
 	{
 	public int numBins = 8;
 	public int numBinsMinusOne = 7;
 
-	public FashEntry_li[] entries = null;
+	public HashEntry_li[] entries = null;
 
 	public int size = 0;
 
@@ -13,18 +15,18 @@ public class Fashtable_li
 
 
 	// Constructor
-	public Fashtable_li()
+	public Hashtable_li()
 		{
-		entries = new FashEntry_li[numBins];
+		entries = new HashEntry_li[numBins];
 		}
 
 
-	public void addTable( Fashtable_li f )
+	public void addTable( Hashtable_li f )
 		{
-		FashEntry_li[] entries = f.returnArrayOfEntries();
+		HashEntry_li[] entries = f.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
-			FashEntry_li entry = entries[ i ];
+			HashEntry_li entry = entries[ i ];
 
 			put( entry.key, entry.value );
 			}
@@ -35,10 +37,10 @@ public class Fashtable_li
 		{
 		int index = (int) ( key & numBinsMinusOne );
 
-		FashEntry_li entry0 = entries[ index ];
+		HashEntry_li entry0 = entries[ index ];
 		if ( entry0 == null )
 			{
-			entry0 = entries[ index ] = new FashEntry_li( key, value );
+			entry0 = entries[ index ] = new HashEntry_li( key, value );
 			size++;
 
 			if ( size > numBins )
@@ -48,7 +50,7 @@ public class Fashtable_li
 			}
 
 		// See if the key is already there
-		FashEntry_li entry = entry0;
+		HashEntry_li entry = entry0;
 		while ( entry != null )
 			{
 			if ( entry.key == key )
@@ -61,7 +63,7 @@ public class Fashtable_li
 			entry = entry.next;
 			}
 
-		entry = new FashEntry_li( key, value );
+		entry = new HashEntry_li( key, value );
 		entry.next = entries[ index ];
 		entries[ index ] = entry;
 
@@ -80,8 +82,8 @@ public class Fashtable_li
 
 		int count = 0;
 
-		FashEntry_li prevEntry = null;
-		FashEntry_li entry = entries[ index ];
+		HashEntry_li prevEntry = null;
+		HashEntry_li entry = entries[ index ];
 		while ( entry != null )
 			{
 			if ( entry.key == key )
@@ -109,7 +111,7 @@ public class Fashtable_li
 		}
 
 
-	public int findKey( FashEntry_li entry, long key )
+	public int findKey( HashEntry_li entry, long key )
 		{
 		while ( entry != null )
 			{
@@ -166,17 +168,17 @@ public class Fashtable_li
 
 	public void rehash()
 		{
-		FashEntry_li[] oldEntries = entries;
+		HashEntry_li[] oldEntries = entries;
 		numBins = numBins << 1;
-		entries = new FashEntry_li[numBins];
+		entries = new HashEntry_li[numBins];
 		numBinsMinusOne = numBins - 1;
 
 		for ( int i = 0; i < oldEntries.length; i++ )
 			{
-			FashEntry_li entry = oldEntries[ i ];
+			HashEntry_li entry = oldEntries[ i ];
 			while ( entry != null )
 				{
-				FashEntry_li next = entry.next;
+				HashEntry_li next = entry.next;
 				entry.next = null;
 
 				int index = (int) ( entry.key & numBinsMinusOne );
@@ -200,7 +202,7 @@ public class Fashtable_li
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_li entry = entries[ i ];
+			HashEntry_li entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != NOT_FOUND )
@@ -219,7 +221,7 @@ public class Fashtable_li
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_li entry = entries[ i ];
+			HashEntry_li entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != NOT_FOUND )
@@ -257,13 +259,13 @@ public class Fashtable_li
 			}
 
 	*/
-	public FashEntry_li[] returnArrayOfEntries()
+	public HashEntry_li[] returnArrayOfEntries()
 		{
 		int c = 0;
-		FashEntry_li[] e = new FashEntry_li[size];
+		HashEntry_li[] e = new HashEntry_li[size];
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_li entry = entries[ i ];
+			HashEntry_li entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != NOT_FOUND )
@@ -281,7 +283,7 @@ public class Fashtable_li
 		{
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_li entry = entries[ i ];
+			HashEntry_li entry = entries[ i ];
 			while ( entry != null )
 				{
 				System.out.println( "HASH: " + entry.key + " " + entry.value );
@@ -320,7 +322,7 @@ public class Fashtable_li
 
 			System.out.println( "-----" + z + "-----" );
 
-			Fashtable_li f2 = new Fashtable_li();
+			Hashtable_li f2 = new Hashtable_li();
 
 			try
 				{

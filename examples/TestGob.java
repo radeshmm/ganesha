@@ -6,48 +6,14 @@ import cota.ganesha.MapServer;
 import cota.util.Queue;
 
 
-public class TestGob extends Gob
+public class TestGob
 	{
-	// GOB_TYPE should be unique across each of the various gobs that are defined in the workspace.
-	// GOB_TYPE is essentially used for error checking and ensuring that requested attributes actually belong
-	// to the gob being queried (attribute ids contain the GOB_TYPE and TYPE within the attribute id itself)
-
-	// This MUST be an integer left-shifted by 24-bits to work correctly
-	public static final int GOB_TYPE = ( 0 << 24 );
-
-	// Attributes MUST be constructed in the following form
-	// attribute = unique id + GOB_TYPE + ATTRIBUTE_TYPE
-	public static int name = 0 + GOB_TYPE + STRING;
-	public static int seenCount = 1 + GOB_TYPE + INT;
-	public static int parts = 2 + GOB_TYPE + LIST;
-
-
-	// Used for creating new objects
-	public TestGob( String name0 ) throws Throwable
+	public static void print( Gob gob ) throws Throwable
 		{
-		super( GOB_TYPE );
+		System.out.println( "name: " + gob.getString( "name" ) );
+		System.out.println( "seenCount: " + gob.getInt( "seenCount" ) );
 
-		f.put( name, name0 );
-		f.put( seenCount, 0 );
-		f.put( parts, Ganesha.createEmptyList() );
-
-		Ganesha.addObject( this );
-		}
-
-
-	// Used to retrieve the object based on id
-	public TestGob( long id ) throws Throwable
-		{
-		super( GOB_TYPE, id );
-		}
-
-
-	public void print() throws Throwable
-		{
-		System.out.println( "name: " + getString( name ) );
-		System.out.println( "seenCount: " + getInt( seenCount ) );
-
-		Queue ids = getIDs( parts );
+		Queue ids = gob.getIDs( "parts" );
 		if ( ids.size() > 0 )
 			{
 			System.out.println( "Parts: " );
@@ -56,8 +22,8 @@ public class TestGob extends Gob
 				{
 				long id = (Long) ids.elementAt( i );
 
-				TestGob part = new TestGob( id );
-				System.out.println( "\t" + id + "\t" + part.getString( name ) );
+				Gob part = new Gob( id );
+				System.out.println( "\t" + id + "\t" + part.getString( "name" ) );
 				}
 			}
 
@@ -72,22 +38,20 @@ public class TestGob extends Gob
 
 			if ( args[ 0 ].equals( "store" ) )
 				{
-				TestGob sun = new TestGob( "sun" );
-				TestGob cloud = new TestGob( "cloudddd" );
-				TestGob sky = new TestGob( "sky" );
+				// Create the objects
+				Gob cloud = new Gob();
+				cloud.put( "name", "cloud" );
 
-				cloud.putString( TestGob.name, "cloud" );
+				Gob sky = new Gob();
+				sky.put( "name", "sky" );
 
-				sun.increment( TestGob.seenCount );
-				sky.increment( TestGob.seenCount );
+				// test increment and putInt
+				sky.increment( "seenCount" );
+				cloud.put( "seenCount", 100 );
 
-				for ( int i = 0; i < 100; i++ )
-					cloud.increment( TestGob.seenCount );
+				// test lists
+				sky.appendID( "parts", cloud.id );
 
-				sky.appendID( TestGob.parts, sun.id );
-				sky.appendID( TestGob.parts, cloud.id );
-
-				System.out.println( "sun id: " + sun.id );
 				System.out.println( "cloud id: " + cloud.id );
 				System.out.println( "sky id: " + sky.id );
 				}
@@ -98,8 +62,8 @@ public class TestGob extends Gob
 
 				Ganesha.printIDInfo( id );
 
-				TestGob gob = new TestGob( id );
-				gob.print();
+				Gob gob = new Gob( id );
+				print( gob );
 				}
 			}
 		catch ( Throwable theX )

@@ -10,7 +10,7 @@ import cota.io.OutStream;
 import cota.networking.Connection;
 import cota.networking.ConnectionPool;
 import cota.networking.TCPServer;
-import cota.util.FashEntry_lo;
+import cota.util.HashEntry_lo;
 import cota.util.LRU_lbt;
 import cota.util.PairBL;
 import cota.util.Queue;
@@ -67,7 +67,7 @@ public class MemoryStoreServer extends TCPServer
 
 		synchronized ( cache )
 			{
-			FashEntry_lo[] entries = cache.f.returnArrayOfEntries();
+			HashEntry_lo[] entries = cache.f.returnArrayOfEntries();
 
 			for ( int i = 0; i < entries.length; i++ )
 				{

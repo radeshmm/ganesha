@@ -5,7 +5,7 @@ import java.net.Socket;
 import cota.io.InStream;
 import cota.io.OutStream;
 import cota.threads.ReusableThread;
-import cota.util.Fashtable_so;
+import cota.util.Hashtable_so;
 import cota.util.Util;
 
 
@@ -26,7 +26,7 @@ public class TCPServerThread extends ReusableThread
 		}
 
 
-	public void performTask( Fashtable_so threadArgs ) throws Throwable
+	public void performTask( Hashtable_so threadArgs ) throws Throwable
 		{
 		Socket s = (Socket) threadArgs.get( "Socket" );
 		TCPServer server = (TCPServer) threadArgs.get( "Server" );

@@ -1,15 +1,19 @@
 package cota.ganesha;
 
 import cota.io.Message;
-import cota.util.FashEntry_io;
-import cota.util.Fashtable_io;
+import cota.util.HashEntry_io;
+import cota.util.Hashtable_io;
+import cota.util.Hashtable_so;
 import cota.util.Queue;
 
 
-// Gob: Ganesha-OBject
+// NOTE - This class provides strict attribute typing and requires extra work to be used
+// For most cases it is recommended to use the Gob
+
+// Gob: Ganesha-Object
 // A Gob is a structured data object that can contain attributes of the types seen below
 
-public class Gob
+public class StrictGob
 	{
 	// Used to specify the types of the attributes
 	public static final int STRING = ( 1 << 16 );
@@ -27,11 +31,14 @@ public class Gob
 	// Used to verify that called attributes are from the type of Gob that they should be
 	public int gobType = -1;
 
-	public Fashtable_io f = new Fashtable_io();
+	// Used by classes that extend  Gob and provide attributes as specially constructed ints
+	// This is more work, but provides an extra level of error checking
+	// GobType also must be provided
+	public Hashtable_io f = new Hashtable_io();
 
 
-	// For create new objects
-	public Gob( int gobType )
+	// For creating new objects of a specific GobType
+	public StrictGob( int gobType )
 		{
 		super();
 
@@ -40,7 +47,7 @@ public class Gob
 
 
 	// Can throw a NotFoundException if something goes wrong
-	public Gob( int gobType, byte[] bytes ) throws Throwable
+	public StrictGob( int gobType, byte[] bytes ) throws Throwable
 		{
 		this.gobType = gobType;
 
@@ -49,7 +56,7 @@ public class Gob
 
 
 	// Can throw a NotFoundException if something goes wrong
-	public Gob( int gobType, long id ) throws Throwable
+	public StrictGob( int gobType, long id ) throws Throwable
 		{
 		this.gobType = gobType;
 
@@ -62,7 +69,7 @@ public class Gob
 
 
 	// Can throw a NotFoundException if something goes wrong
-	public Gob( int gobType, String workspace, String table, String name ) throws Throwable
+	public StrictGob( int gobType, String workspace, String table, String name ) throws Throwable
 		{
 		this.gobType = gobType;
 
@@ -80,7 +87,7 @@ public class Gob
 		{
 		//		System.out.println( "init bytes.length: " + bytes.length );
 
-		f = new Fashtable_io();
+		f = new Hashtable_io();
 
 		Message m = new Message( bytes );
 
@@ -132,7 +139,7 @@ public class Gob
 
 	public byte[] returnBytes() throws Throwable
 		{
-		FashEntry_io[] entries = f.returnArrayOfEntries();
+		HashEntry_io[] entries = f.returnArrayOfEntries();
 
 		Message m = new Message();
 		m.write2Bytes( entries.length );
@@ -399,8 +406,6 @@ public class Gob
 			if ( attributeType != MEMORY_BYTES )
 				if ( attributeType != MEMORY_INT )
 					throw new Throwable( "Calling putLong with non long attribute" );
-
-		byte[] bytes = returnBytes();
 
 		byte[] newBytes = Ganesha.putLong( id, attribute, v );
 
@@ -788,7 +793,7 @@ public class Gob
 		}
 
 
-	public static void printIDs( Gob gob, int attribute ) throws Throwable
+	public static void printIDs( StrictGob gob, int attribute ) throws Throwable
 		{
 		Queue ids = gob.getIDs( attribute );
 		//System.out.println( "# ids : " + ids.size() );

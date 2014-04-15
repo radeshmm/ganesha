@@ -28,41 +28,6 @@
    
    Long Integer IDs for Data - long integer ids are used for simplicity and efficiency, while at the same time providing built in timestamps and server-load statistics using a novel id-generation technique.
 
-   
-
------ BENCHMARKS -----
-
-Ganesha has been used in production since August 2013 on a 5 server cluster by DrawCast, a social network for artists (for iOS and Android).  That cluster currently processes an average of 3000 database API calls per second, or 8 billion calls per month with an average load of .25 for each server (standard deviation of .6).
-
-Here are some benchmarks running on Amazon EC2 using m3.xlarge nodes:
-
-    On a single node cluster:
-       1-way-replicated writes: ~7000 writes/s
-       1-way-replicated reads: ~31000 reads/s
-
-    On a three node cluster:
-       3-way-replicated writes: ~23000 writes/s
-       3-way-replicated reads: ~42000 reads/s
-
-    On a five node cluster:
-       3-way-replicated writes: ~27000 writes/s
-       3-way-replicated reads: ~44000 reads/s
-
-    On a five node cluster:
-       5-way-replicated writes: ~15000 writes/s
-       5-way-replicated reads: ~42000 reads/s
-
-
-Keep in mind that all reads/writes are checked with all relevant servers for consistency and correctness (using timestamps/checksums).
-
-You can repeat these tests by running:
-
-   java -cp ganesha_all.jar cota.ganeshatest.Test gen
-	
-   java -cp ganesha_all.jar cota.ganeshatest.Test writing
-
-   java -cp ganesha_all.jar cota.ganeshatest.Test reading
-
 
 
 ----- INSTALLATION (Linux) -----
@@ -115,6 +80,41 @@ You can repeat these tests by running:
 
 
 
+----- BENCHMARKS -----
+
+Ganesha has been used in production since August 2013 on a 5 server cluster by DrawCast, a social network for artists (for iOS and Android).  That cluster currently processes an average of 3000 database API calls per second, or 8 billion calls per month with an average load of .25 for each server (standard deviation of .6).
+
+Here are some benchmarks running on Amazon EC2 using m3.xlarge nodes:
+
+    On a single node cluster:
+       1-way-replicated writes: ~7000 writes/s
+       1-way-replicated reads: ~31000 reads/s
+
+    On a three node cluster:
+       3-way-replicated writes: ~23000 writes/s
+       3-way-replicated reads: ~42000 reads/s
+
+    On a five node cluster:
+       3-way-replicated writes: ~27000 writes/s
+       3-way-replicated reads: ~44000 reads/s
+
+    On a five node cluster:
+       5-way-replicated writes: ~15000 writes/s
+       5-way-replicated reads: ~42000 reads/s
+
+
+Keep in mind that all reads/writes are checked with all relevant servers for consistency and correctness (using timestamps/checksums).
+
+You can repeat these tests by running:
+
+   java -cp ganesha_all.jar cota.ganeshatest.Test gen
+
+   java -cp ganesha_all.jar cota.ganeshatest.Test writing
+
+   java -cp ganesha_all.jar cota.ganeshatest.Test reading
+
+
+
 ----- BASIC API USAGE -----
 
 Ganesha provides a direct API for bytes and list manipulation.  Objects will be discussed below.
@@ -158,35 +158,25 @@ Objects (known as Gobs, short for Ganesha Objects) can be accessed in two ways:
    1 - explicitly by their long id
    2 - using a name based key (described in then next section)
       
-All objects contain attributes (which allow specific pieces of data to be accessed from within an object)
-
-The examples/TestGob.java file shows you the basic way of extending the Gob class.  Pay close attention to how the attributes and GOB_TYPE are defined.  They MUST be defined as indicated to allow error detection safeguards to function correctly.
-
-Once defined, objects can be used as follows (further API functionality found in Gob.java):   
+All objects contain attributes (which allow specific pieces of data to be accessed from within an object).  These attributes are referred to by name (further details can be found in Gob.java).
 
    // Create the objects
-   TestGob sun = new TestGob( "sun" );
-   TestGob cloud = new TestGob( "cloudddd" );
-   TestGob sky = new TestGob( "sky" );
-   
-   // correct the name
-   cloud.putString( TestGob.name,"cloud" ); 
+   Gob cloud = new Gob();
+   cloud.put( "name", "cloud" );
 
-   // test increment
-   sun.increment( TestGob.numberSeen );
-   sky.increment( TestGob.numberSeen );
+   Gob sky = new Gob();
+   sky.put( "name", "sky" );
 
-   for( int i = 0; i < 100; i++ )
-      cloud.increment( TestGob.numberSeen );
-   
+   // test increment and put
+   sky.increment( "seenCount" );
+   cloud.put( "seenCount", 100 );
+
    // test lists
-   sky.appendID( TestGob.parts, sun.id );
-   sky.appendID( TestGob.parts, cloud.id );
+   sky.appendID( "parts", cloud.id );
 
 
    // Retrieve the sky by id
-   TestGob sky2 = new TestGob( sky.id );
-   sky2.print();
+   Gob sky2 = new Gob( sky.id );
    
    
 Test via TestGob class
@@ -202,30 +192,28 @@ ALL objects are stored by long ids, but it is sometimes necessary to store them 
    
 Named objects employ a workspace/table/name mechanism to generate a unique key. The workspaces allow the same Gob classes to be used with different applications.  For example you might have Friendland/User/Daniel object and ChatWorld/User/Daniel object. These two "keys" refer to completely different objects contained within two different workspaces.
 
-Name objects (like all data stored in Ganesha) also have a corresponding long id.  You can find it using the call:
-   long id = Translator.translate( workspace, table, name);
-   
-examples/TestGob2.java shows you what you need to get name based object references to work correctly. 
-
+Named objects (like all data stored in Ganesha) have a corresponding long id.  You can find it using the call:
+   long id = Translator.translate( workspace, table, name );
    
 Name-based objects can be used as follows:   
 
    // Store the objects by name
-   TestGob2 sun = new TestGob2( "galaxy", "sun", "orangeish", 3300000000000L );
-   TestGob2 otherSun = new TestGob2( "other_galaxy", "sun", "red", 10000000000L );
+   Gob sun = new Gob( "galaxy", "stars", "sun" );
+   sun.put( "color", "orangeish" );
+   sun.put( "weight", 3300000000000L );
 
-   // Modify
-   sun.putString( color, "orange" );
-   otherSun.putLong( weight, 99999999999999L );
+   Gob otherSun = new Gob( "other_galaxy", "stars", "sun" );
+   otherSun.put( "color", "red" );
+   otherSun.put( "weight", 10000000000L );
 
+	// Modification overwrite as expected
+	sun.put( "color", "orange" );
    
-   // Retrieve by name and print
-   TestGob2 sun2 = new TestGob2( "galaxy", "sun" );
-   TestGob2 otherSun2 = new TestGob2( "other_galaxy", "sun" );
 
-   sun2.print();
-   otherSun2.print();
-   
+	// Retrieve by name
+	Gob sun2 = new Gob( "galaxy", "stars", "sun" );
+	Gob otherSun2 = new Gob( "other_galaxy", "stars", "sun" );
+
 
 Test via TestGob2 class
    java -cp ganesha_all.jar cota.ganeshatest.TestGob2 store
@@ -233,10 +221,6 @@ Test via TestGob2 class
    java -cp ganesha_all.jar cota.ganeshatest.TestGob2 print
 
    
-
-A note about name based objects: anytime you need to reference an object that refers to something in the real world (like a user, a device id, a country, etc), you'll use the name-based reference to store/retrieve the objects.  Objects created within Ganesha that have no real-world analogy (like comments, uploaded photos, news feed items, etc) can simply be accessed by their long id (as there is no way to refer to them by name...they have no 'name', just an id).
-
-
 
 ----- RUNNING ON AMAZON EC2 CLOUD -----
 

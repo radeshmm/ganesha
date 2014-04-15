@@ -38,7 +38,7 @@ public class LRU_so
 	long currentCost = 0;
 	long maxTotalCost = 0;
 
-	Fashtable_so f = new Fashtable_so();
+	Hashtable_so f = new Hashtable_so();
 	CacheObject newest = null;
 	CacheObject oldest = null;
 

@@ -11,7 +11,7 @@ import cota.networking.ConnectionPool;
 import cota.networking.TCPServer;
 import cota.objectstore.MemoryStoreServer;
 import cota.util.ErrorHandler;
-import cota.util.Fashtable_so;
+import cota.util.Hashtable_so;
 import cota.util.LRU_lbt;
 import cota.util.LRU_lo;
 import cota.util.PairBL;
@@ -248,7 +248,7 @@ public class MemoryServer extends TCPServer
 				return new PairBL( p.x, p.y );
 			}
 
-		Fashtable_so f = new Fashtable_so();
+		Hashtable_so f = new Hashtable_so();
 		long newestTimestamp = 0;
 		PairBL newestP = null;
 

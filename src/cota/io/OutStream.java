@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import cota.crypto.Murmur;
-import cota.util.Fashtable_io;
+import cota.util.Hashtable_io;
 import cota.util.Util;
 
 
@@ -36,7 +36,7 @@ public class OutStream
 
 	String stackTrace = "";
 
-	static Fashtable_io f = new Fashtable_io();
+	static Hashtable_io f = new Hashtable_io();
 
 
 	public int hashCode()

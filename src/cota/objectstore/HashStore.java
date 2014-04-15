@@ -6,10 +6,10 @@ import java.util.zip.CRC32;
 
 import cota.crypto.Murmur;
 import cota.ganesha.MapServer;
-import cota.ganesha.Gob;
+import cota.ganesha.StrictGob;
 import cota.io.InStream;
 import cota.io.Message;
-import cota.util.Fashtable_lo;
+import cota.util.Hashtable_lo;
 import cota.util.LRU_io;
 import cota.util.PairSL;
 import cota.util.Queue;
@@ -514,7 +514,7 @@ public class HashStore extends ObjectStore
 	public Queue namesAndIDsInTable( String workspace, String table ) throws Throwable
 		{
 		Queue q = new Queue();
-		Fashtable_lo ft = new Fashtable_lo();
+		Hashtable_lo ft = new Hashtable_lo();
 
 		File dir = new File( "data_translations" );
 		String[] files = dir.list();
@@ -593,7 +593,7 @@ public class HashStore extends ObjectStore
 						{
 						try
 							{
-							Gob gob = new Gob( gobType, bo.bytes );
+							StrictGob gob = new StrictGob( gobType, bo.bytes );
 
 							String s = gob.getString( attribute );
 

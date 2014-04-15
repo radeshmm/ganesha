@@ -1,38 +1,37 @@
 package cota.util;
 
-import java.util.Hashtable;
+//A fast, memory efficient Hashtable mapping int->Object
 
-
-public class Fashtable_so
+public class Hashtable_io
 	{
 	public int numBins = 8;
 	public int numBinsMinusOne = 7;
 
-	public FashEntry_so[] entries = null;
+	public HashEntry_io[] entries = null;
 
 	public int size = 0;
 
 
 	// Constructor
-	public Fashtable_so()
+	public Hashtable_io()
 		{
-		entries = new FashEntry_so[numBins];
+		entries = new HashEntry_io[numBins];
 		}
 
 
-	public void addTable( Fashtable_so f )
+	public void addTable( Hashtable_io f )
 		{
-		FashEntry_so[] entries = f.returnArrayOfEntries();
+		HashEntry_io[] entries = f.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
-			FashEntry_so entry = entries[ i ];
+			HashEntry_io entry = entries[ i ];
 
 			put( entry.key, entry.value );
 			}
 		}
 
 
-	public void put( String key, Object value )
+	public void put( int key, Object value )
 		{
 		// null entries are not allowed
 		if ( value == null )
@@ -42,13 +41,12 @@ public class Fashtable_so
 			return;
 			}
 
-		int hash = key.hashCode();
-		int index = hash & numBinsMinusOne;
+		int index = key & numBinsMinusOne;
 
-		FashEntry_so entry0 = entries[ index ];
+		HashEntry_io entry0 = entries[ index ];
 		if ( entry0 == null )
 			{
-			entry0 = entries[ index ] = new FashEntry_so( key, value, hash );
+			entry0 = entries[ index ] = new HashEntry_io( key, value );
 			size++;
 
 			if ( size > numBins )
@@ -58,10 +56,10 @@ public class Fashtable_so
 			}
 
 		// See if the key is already there
-		FashEntry_so entry = entry0;
+		HashEntry_io entry = entry0;
 		while ( entry != null )
 			{
-			if ( entry.key.equals( key ) )
+			if ( entry.key == key )
 				{
 				entry.value = value;
 
@@ -71,7 +69,7 @@ public class Fashtable_so
 			entry = entry.next;
 			}
 
-		entry = new FashEntry_so( key, value, hash );
+		entry = new HashEntry_io( key, value );
 		entry.next = entries[ index ];
 		entries[ index ] = entry;
 
@@ -81,21 +79,20 @@ public class Fashtable_so
 		}
 
 
-	public Object remove( String key )
+	public Object remove( int key )
 		{
-		int hash = key.hashCode();
-		int index = hash & numBinsMinusOne;
+		int index = key & numBinsMinusOne;
 
 		if ( entries[ index ] == null )
 			return null;
 
 		int count = 0;
 
-		FashEntry_so prevEntry = null;
-		FashEntry_so entry = entries[ index ];
+		HashEntry_io prevEntry = null;
+		HashEntry_io entry = entries[ index ];
 		while ( entry != null )
 			{
-			if ( entry.key.equals( key ) )
+			if ( entry.key == key )
 				{
 				Object v = entry.value;
 
@@ -120,12 +117,14 @@ public class Fashtable_so
 		}
 
 
-	public Object findKey( FashEntry_so entry, String key )
+	public Object findKey( HashEntry_io entry, int key )
 		{
 		while ( entry != null )
 			{
-			if ( entry.key.equals( key ) )
+			if ( entry.key == key )
+				{
 				return entry.value;
+				}
 
 			entry = entry.next;
 			}
@@ -134,31 +133,15 @@ public class Fashtable_so
 		}
 
 
-	public Object get( String key )
+	public Object get( int key )
 		{
-		if ( key == null )
-			return null;
-
-		int hash = key.hashCode();
-		int index = hash & numBinsMinusOne;
+		int index = key & numBinsMinusOne;
 
 		return findKey( entries[ index ], key );
 		}
 
 
-	public Integer getInt( String key )
-		{
-		if ( key == null )
-			return null;
-
-		int hash = key.hashCode();
-		int index = hash & numBinsMinusOne;
-
-		return (Integer) findKey( entries[ index ], key );
-		}
-
-
-	public String getString( String key )
+	public String getString( int key )
 		{
 		Object o = get( key );
 
@@ -167,10 +150,14 @@ public class Fashtable_so
 
 		String s = (String) o;
 		while ( s.startsWith( " " ) )
+			{
 			s = s.substring( 1, s.length() );
+			}
 
 		while ( s.endsWith( " " ) )
+			{
 			s = s.substring( 0, s.length() - 1 );
+			}
 
 		return s;
 		}
@@ -187,20 +174,20 @@ public class Fashtable_so
 
 	public void rehash()
 		{
-		FashEntry_so[] oldEntries = entries;
+		HashEntry_io[] oldEntries = entries;
 		numBins = numBins << 1;
-		entries = new FashEntry_so[numBins];
+		entries = new HashEntry_io[numBins];
 		numBinsMinusOne = numBins - 1;
 
 		for ( int i = 0; i < oldEntries.length; i++ )
 			{
-			FashEntry_so entry = oldEntries[ i ];
+			HashEntry_io entry = oldEntries[ i ];
 			while ( entry != null )
 				{
-				FashEntry_so next = entry.next;
+				HashEntry_io next = entry.next;
 				entry.next = null;
 
-				int index = entry.hash & numBinsMinusOne;
+				int index = entry.key & numBinsMinusOne;
 
 				if ( entries[ index ] == null )
 					entries[ index ] = entry;
@@ -221,7 +208,7 @@ public class Fashtable_so
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_so entry = entries[ i ];
+			HashEntry_io entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != null )
@@ -240,7 +227,7 @@ public class Fashtable_so
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_so entry = entries[ i ];
+			HashEntry_io entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != null )
@@ -254,36 +241,37 @@ public class Fashtable_so
 		}
 
 
-	public Queue returnEntries()
-		{
-		Queue q = new Queue();
-		for ( int i = 0; i < numBins; i++ )
+	/*
+		public Queue returnEntries()
 			{
-			FashEntry_so entry = entries[ i ];
-			while ( entry != null )
+			Queue q = new Queue();
+			for ( int i = 0; i < numBins; i++ )
 				{
-				if ( entry.value != null )
+				NashEntry entry = entries[ i ];
+				while ( entry != null )
 					{
-					// System.out.println( "DDDDDD: " + entry.key + " " +
-					// entry.value );
-					q.addObject( new PairSO( entry.key, entry.value ) );
-					}
+					if ( entry.value != null )
+						{
+						// System.out.println( "DDDDDD: " + entry.key + " " +
+						// entry.value );
+						q.addObject( new PairIO( entry.key, entry.value ) );
+						}
 
-				entry = entry.next;
+					entry = entry.next;
+					}
 				}
+
+			return q;
 			}
 
-		return q;
-		}
-
-
-	public FashEntry_so[] returnArrayOfEntries()
+	*/
+	public HashEntry_io[] returnArrayOfEntries()
 		{
 		int c = 0;
-		FashEntry_so[] e = new FashEntry_so[size];
+		HashEntry_io[] e = new HashEntry_io[size];
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_so entry = entries[ i ];
+			HashEntry_io entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != null )
@@ -301,7 +289,7 @@ public class Fashtable_so
 		{
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_so entry = entries[ i ];
+			HashEntry_io entry = entries[ i ];
 			while ( entry != null )
 				{
 				System.out.println( "HASH: " + entry.key + " " + entry.value );
@@ -314,6 +302,22 @@ public class Fashtable_so
 
 	public static void main( String[] args )
 		{
+		/*int x = 100000000;
+		
+				for ( int i = 0; i < 1000; i++ )
+					{
+					System.gc();
+
+					int[] foo = new int[x];
+					int[] foo2 = new int[x];
+
+					System.out.println( x );
+
+					//		x = x * 2;
+					}
+		*/
+		System.out.println( System.currentTimeMillis() );
+
 		int z = 1;
 		for ( int z0 = 0; z0 < 1000000; z0 = z0 + 10000 )
 			{
@@ -323,46 +327,21 @@ public class Fashtable_so
 
 			System.out.println( "-----" + z + "-----" );
 
-			try
-				{
-				Hashtable h = new Hashtable();
+			Hashtable_io f2 = new Hashtable_io();
 
-				long time = System.currentTimeMillis();
-				for ( int i = 0; i < z; i++ )
-					{
-					h.put( "key" + i, "value" + i );
-					}
-
-				System.out.print( "Hashtable: " + ( System.currentTimeMillis() - time ) );
-				time = System.currentTimeMillis();
-				for ( int i = 0; i < z; i++ )
-					{
-					Object v = h.get( "key" + i );
-
-					if ( !v.equals( "value" + i ) )
-						System.out.println( "ERRRROR" );
-					}
-				System.out.println( ":" + ( System.currentTimeMillis() - time ) );
-				}
-			catch ( Throwable theX )
-				{
-				Util.printX( "", theX );
-				}
-
-			Fashtable_so f = new Fashtable_so();
 			try
 				{
 				long time = System.currentTimeMillis();
 				for ( int i = 0; i < z; i++ )
 					{
-					f.put( "key" + i, "value" + i );
+					f2.put( i, "value" + i );
 					}
 
-				System.out.print( "Fashtable1: " + ( System.currentTimeMillis() - time ) );
+				System.out.print( "Nashtable: " + ( System.currentTimeMillis() - time ) );
 				time = System.currentTimeMillis();
 				for ( int i = 0; i < z; i++ )
 					{
-					Object v = f.get( "key" + i );
+					Object v = f2.get( i );
 
 					if ( !v.equals( "value" + i ) )
 						System.out.println( "ERRRROR" );

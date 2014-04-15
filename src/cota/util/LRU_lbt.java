@@ -42,7 +42,7 @@ public class LRU_lbt
 	long currentCacheSize = 0;
 	long maxCacheSize = 0;
 
-	public Fashtable_lo f = new Fashtable_lo();
+	public Hashtable_lo f = new Hashtable_lo();
 	CacheObject newest = null;
 	CacheObject oldest = null;
 

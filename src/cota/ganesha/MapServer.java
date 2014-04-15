@@ -13,9 +13,9 @@ import cota.io.OutStream;
 import cota.networking.TCPServer;
 import cota.objectstore.HashStoreServer;
 import cota.util.ErrorHandler;
-import cota.util.FashEntry_so;
-import cota.util.Fashtable_si;
-import cota.util.Fashtable_so;
+import cota.util.HashEntry_so;
+import cota.util.Hashtable_si;
+import cota.util.Hashtable_so;
 import cota.util.PairOL;
 import cota.util.PairSI;
 import cota.util.Queue;
@@ -43,9 +43,9 @@ public class MapServer extends TCPServer implements Runnable
 	static Queue map = new Queue();
 	static Queue replicationFactors = new Queue();
 
-	static Fashtable_so seenIPs = null;
+	static Hashtable_so seenIPs = null;
 
-	static Fashtable_si downServers = new Fashtable_si();
+	static Hashtable_si downServers = new Hashtable_si();
 	public static boolean shouldMarkServersAsDown = false;
 
 
@@ -71,7 +71,7 @@ public class MapServer extends TCPServer implements Runnable
 
 			myIP = (String) lines.elementAt( 0 );
 
-			seenIPs = new Fashtable_so();
+			seenIPs = new Hashtable_so();
 
 			singleton = new MapServer( startServer );
 
@@ -115,7 +115,7 @@ public class MapServer extends TCPServer implements Runnable
 		long timeInSeconds0 = -2;
 
 		int numSeenServers = 0;
-		Fashtable_so seenServers = new Fashtable_so();
+		Hashtable_so seenServers = new Hashtable_so();
 
 		Queue map2 = new Queue();
 		Queue replicationFactors2 = new Queue();
@@ -562,7 +562,7 @@ public class MapServer extends TCPServer implements Runnable
 
 	public static Queue returnAllIPs()
 		{
-		FashEntry_so[] entries = seenIPs.returnArrayOfEntries();
+		HashEntry_so[] entries = seenIPs.returnArrayOfEntries();
 
 		Queue q = new Queue();
 		for ( int i = 0; i < entries.length; i++ )

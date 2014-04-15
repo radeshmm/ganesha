@@ -1,37 +1,39 @@
 package cota.util;
 
-public class Fashtable_si
+//A fast, memory efficient Hashtable mapping String->long
+
+public class Hashtable_sl
 	{
 	public int numBins = 8;
 	public int numBinsMinusOne = 7;
 
-	public FashEntry_si[] entries = null;
+	public HashEntry_sl[] entries = null;
 
 	public int size = 0;
 
-	public static final int NOT_FOUND = Integer.MAX_VALUE;
+	public static final long NOT_FOUND = Long.MAX_VALUE;
 
 
 	// Constructor
-	public Fashtable_si()
+	public Hashtable_sl()
 		{
-		entries = new FashEntry_si[numBins];
+		entries = new HashEntry_sl[numBins];
 		}
 
 
-	public void addTable( Fashtable_si f )
+	public void addTable( Hashtable_sl f )
 		{
-		FashEntry_si[] entries = f.returnArrayOfEntries();
+		HashEntry_sl[] entries = f.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
-			FashEntry_si entry = entries[ i ];
+			HashEntry_sl entry = entries[ i ];
 
 			put( entry.key, entry.value );
 			}
 		}
 
 
-	public void put( String key, int value )
+	public void put( String key, long value )
 		{
 		// null entries are not allowed
 		if ( value == NOT_FOUND )
@@ -44,10 +46,10 @@ public class Fashtable_si
 		int hash = key.hashCode();
 		int index = hash & numBinsMinusOne;
 
-		FashEntry_si entry0 = entries[ index ];
+		HashEntry_sl entry0 = entries[ index ];
 		if ( entry0 == null )
 			{
-			entry0 = entries[ index ] = new FashEntry_si( key, value, hash );
+			entry0 = entries[ index ] = new HashEntry_sl( key, value, hash );
 			size++;
 
 			if ( size > numBins )
@@ -57,7 +59,7 @@ public class Fashtable_si
 			}
 
 		// See if the key is already there
-		FashEntry_si entry = entry0;
+		HashEntry_sl entry = entry0;
 		while ( entry != null )
 			{
 			if ( entry.key.equals( key ) )
@@ -70,7 +72,7 @@ public class Fashtable_si
 			entry = entry.next;
 			}
 
-		entry = new FashEntry_si( key, value, hash );
+		entry = new HashEntry_sl( key, value, hash );
 		entry.next = entries[ index ];
 		entries[ index ] = entry;
 
@@ -90,8 +92,8 @@ public class Fashtable_si
 
 		int count = 0;
 
-		FashEntry_si prevEntry = null;
-		FashEntry_si entry = entries[ index ];
+		HashEntry_sl prevEntry = null;
+		HashEntry_sl entry = entries[ index ];
 		while ( entry != null )
 			{
 			if ( entry.key.equals( key ) )
@@ -119,7 +121,7 @@ public class Fashtable_si
 		}
 
 
-	public int findKey( FashEntry_si entry, String key )
+	public long findKey( HashEntry_sl entry, String key )
 		{
 		while ( entry != null )
 			{
@@ -135,7 +137,7 @@ public class Fashtable_si
 		}
 
 
-	public int get( String key )
+	public long get( String key )
 		{
 		if ( key == null )
 			return NOT_FOUND;
@@ -158,17 +160,17 @@ public class Fashtable_si
 
 	public void rehash()
 		{
-		FashEntry_si[] oldEntries = entries;
+		HashEntry_sl[] oldEntries = entries;
 		numBins = numBins << 1;
-		entries = new FashEntry_si[numBins];
+		entries = new HashEntry_sl[numBins];
 		numBinsMinusOne = numBins - 1;
 
 		for ( int i = 0; i < oldEntries.length; i++ )
 			{
-			FashEntry_si entry = oldEntries[ i ];
+			HashEntry_sl entry = oldEntries[ i ];
 			while ( entry != null )
 				{
-				FashEntry_si next = entry.next;
+				HashEntry_sl next = entry.next;
 				entry.next = null;
 
 				int index = entry.hash & numBinsMinusOne;
@@ -192,7 +194,7 @@ public class Fashtable_si
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_si entry = entries[ i ];
+			HashEntry_sl entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != NOT_FOUND )
@@ -211,7 +213,7 @@ public class Fashtable_si
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_si entry = entries[ i ];
+			HashEntry_sl entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != NOT_FOUND )
@@ -230,7 +232,7 @@ public class Fashtable_si
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_si entry = entries[ i ];
+			HashEntry_sl entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != NOT_FOUND )
@@ -248,13 +250,13 @@ public class Fashtable_si
 		}
 
 
-	public FashEntry_si[] returnArrayOfEntries()
+	public HashEntry_sl[] returnArrayOfEntries()
 		{
 		int c = 0;
-		FashEntry_si[] e = new FashEntry_si[size];
+		HashEntry_sl[] e = new HashEntry_sl[size];
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_si entry = entries[ i ];
+			HashEntry_sl entry = entries[ i ];
 			while ( entry != null )
 				{
 				if ( entry.value != NOT_FOUND )
@@ -272,7 +274,7 @@ public class Fashtable_si
 		{
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_si entry = entries[ i ];
+			HashEntry_sl entry = entries[ i ];
 			while ( entry != null )
 				{
 				System.out.println( "HASH: " + entry.key + " " + entry.value );
@@ -293,7 +295,7 @@ public class Fashtable_si
 			System.gc();
 
 			System.out.println( "-----" + z + "-----" );
-			Fashtable_si f = new Fashtable_si();
+			Hashtable_sl f = new Hashtable_sl();
 
 			try
 				{
@@ -319,7 +321,7 @@ public class Fashtable_si
 				Util.printX( "", theX );
 				}
 
-			Fashtable_so f2 = new Fashtable_so();
+			Hashtable_so f2 = new Hashtable_so();
 			try
 				{
 				long time = System.currentTimeMillis();

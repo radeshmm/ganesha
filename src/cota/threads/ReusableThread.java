@@ -1,6 +1,6 @@
 package cota.threads;
 
-import cota.util.Fashtable_so;
+import cota.util.Hashtable_so;
 import cota.util.Util;
 
 
@@ -13,7 +13,7 @@ public abstract class ReusableThread extends Thread
 	Object activationLock = new Object();
 	boolean active = false;
 
-	private Fashtable_so threadArgs = new Fashtable_so();
+	private Hashtable_so threadArgs = new Hashtable_so();
 
 
 	public void init( ThreadPool pool )
@@ -77,5 +77,5 @@ public abstract class ReusableThread extends Thread
 		}
 
 
-	public abstract void performTask( Fashtable_so args ) throws Throwable;
+	public abstract void performTask( Hashtable_so args ) throws Throwable;
 	}

@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import cota.crypto.Murmur;
-import cota.util.Fashtable_io;
+import cota.util.Hashtable_io;
 import cota.util.Queue;
 import cota.util.Util;
 
@@ -16,7 +16,7 @@ import cota.util.Util;
 // utf8Encoded must be set to true for the call to work correctly!
 public class InStream
 	{
-	static Fashtable_io f = new Fashtable_io();
+	static Hashtable_io f = new Hashtable_io();
 
 	int bufferSize = 1024 * 32;
 	byte[] buffer = null;

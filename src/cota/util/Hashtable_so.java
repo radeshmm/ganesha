@@ -1,40 +1,43 @@
 package cota.util;
 
-public class Fashtable_sl
+import java.util.Hashtable;
+
+
+//A fast, memory efficient Hashtable mapping String->Object
+
+public class Hashtable_so
 	{
 	public int numBins = 8;
 	public int numBinsMinusOne = 7;
 
-	public FashEntry_sl[] entries = null;
+	public HashEntry_so[] entries = null;
 
 	public int size = 0;
 
-	public static final long NOT_FOUND = Long.MAX_VALUE;
-
 
 	// Constructor
-	public Fashtable_sl()
+	public Hashtable_so()
 		{
-		entries = new FashEntry_sl[numBins];
+		entries = new HashEntry_so[numBins];
 		}
 
 
-	public void addTable( Fashtable_sl f )
+	public void addTable( Hashtable_so f )
 		{
-		FashEntry_sl[] entries = f.returnArrayOfEntries();
+		HashEntry_so[] entries = f.returnArrayOfEntries();
 		for ( int i = 0; i < entries.length; i++ )
 			{
-			FashEntry_sl entry = entries[ i ];
+			HashEntry_so entry = entries[ i ];
 
 			put( entry.key, entry.value );
 			}
 		}
 
 
-	public void put( String key, long value )
+	public void put( String key, Object value )
 		{
 		// null entries are not allowed
-		if ( value == NOT_FOUND )
+		if ( value == null )
 			{
 			remove( key );
 
@@ -44,10 +47,10 @@ public class Fashtable_sl
 		int hash = key.hashCode();
 		int index = hash & numBinsMinusOne;
 
-		FashEntry_sl entry0 = entries[ index ];
+		HashEntry_so entry0 = entries[ index ];
 		if ( entry0 == null )
 			{
-			entry0 = entries[ index ] = new FashEntry_sl( key, value, hash );
+			entry0 = entries[ index ] = new HashEntry_so( key, value, hash );
 			size++;
 
 			if ( size > numBins )
@@ -57,7 +60,7 @@ public class Fashtable_sl
 			}
 
 		// See if the key is already there
-		FashEntry_sl entry = entry0;
+		HashEntry_so entry = entry0;
 		while ( entry != null )
 			{
 			if ( entry.key.equals( key ) )
@@ -70,7 +73,7 @@ public class Fashtable_sl
 			entry = entry.next;
 			}
 
-		entry = new FashEntry_sl( key, value, hash );
+		entry = new HashEntry_so( key, value, hash );
 		entry.next = entries[ index ];
 		entries[ index ] = entry;
 
@@ -90,8 +93,8 @@ public class Fashtable_sl
 
 		int count = 0;
 
-		FashEntry_sl prevEntry = null;
-		FashEntry_sl entry = entries[ index ];
+		HashEntry_so prevEntry = null;
+		HashEntry_so entry = entries[ index ];
 		while ( entry != null )
 			{
 			if ( entry.key.equals( key ) )
@@ -119,31 +122,59 @@ public class Fashtable_sl
 		}
 
 
-	public long findKey( FashEntry_sl entry, String key )
+	public Object findKey( HashEntry_so entry, String key )
 		{
 		while ( entry != null )
 			{
 			if ( entry.key.equals( key ) )
-				{
 				return entry.value;
-				}
 
 			entry = entry.next;
 			}
 
-		return NOT_FOUND;
+		return null;
 		}
 
 
-	public long get( String key )
+	public Object get( String key )
 		{
 		if ( key == null )
-			return NOT_FOUND;
+			return null;
 
 		int hash = key.hashCode();
 		int index = hash & numBinsMinusOne;
 
 		return findKey( entries[ index ], key );
+		}
+
+
+	public Integer getInt( String key )
+		{
+		if ( key == null )
+			return null;
+
+		int hash = key.hashCode();
+		int index = hash & numBinsMinusOne;
+
+		return (Integer) findKey( entries[ index ], key );
+		}
+
+
+	public String getString( String key )
+		{
+		Object o = get( key );
+
+		if ( o == null )
+			return "";
+
+		String s = (String) o;
+		while ( s.startsWith( " " ) )
+			s = s.substring( 1, s.length() );
+
+		while ( s.endsWith( " " ) )
+			s = s.substring( 0, s.length() - 1 );
+
+		return s;
 		}
 
 
@@ -158,17 +189,17 @@ public class Fashtable_sl
 
 	public void rehash()
 		{
-		FashEntry_sl[] oldEntries = entries;
+		HashEntry_so[] oldEntries = entries;
 		numBins = numBins << 1;
-		entries = new FashEntry_sl[numBins];
+		entries = new HashEntry_so[numBins];
 		numBinsMinusOne = numBins - 1;
 
 		for ( int i = 0; i < oldEntries.length; i++ )
 			{
-			FashEntry_sl entry = oldEntries[ i ];
+			HashEntry_so entry = oldEntries[ i ];
 			while ( entry != null )
 				{
-				FashEntry_sl next = entry.next;
+				HashEntry_so next = entry.next;
 				entry.next = null;
 
 				int index = entry.hash & numBinsMinusOne;
@@ -192,10 +223,10 @@ public class Fashtable_sl
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_sl entry = entries[ i ];
+			HashEntry_so entry = entries[ i ];
 			while ( entry != null )
 				{
-				if ( entry.value != NOT_FOUND )
+				if ( entry.value != null )
 					q.addObject( entry.key );
 
 				entry = entry.next;
@@ -211,10 +242,10 @@ public class Fashtable_sl
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_sl entry = entries[ i ];
+			HashEntry_so entry = entries[ i ];
 			while ( entry != null )
 				{
-				if ( entry.value != NOT_FOUND )
+				if ( entry.value != null )
 					q.addObject( entry.value );
 
 				entry = entry.next;
@@ -230,10 +261,10 @@ public class Fashtable_sl
 		Queue q = new Queue();
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_sl entry = entries[ i ];
+			HashEntry_so entry = entries[ i ];
 			while ( entry != null )
 				{
-				if ( entry.value != NOT_FOUND )
+				if ( entry.value != null )
 					{
 					// System.out.println( "DDDDDD: " + entry.key + " " +
 					// entry.value );
@@ -248,16 +279,16 @@ public class Fashtable_sl
 		}
 
 
-	public FashEntry_sl[] returnArrayOfEntries()
+	public HashEntry_so[] returnArrayOfEntries()
 		{
 		int c = 0;
-		FashEntry_sl[] e = new FashEntry_sl[size];
+		HashEntry_so[] e = new HashEntry_so[size];
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_sl entry = entries[ i ];
+			HashEntry_so entry = entries[ i ];
 			while ( entry != null )
 				{
-				if ( entry.value != NOT_FOUND )
+				if ( entry.value != null )
 					e[ c++ ] = entry;
 
 				entry = entry.next;
@@ -272,7 +303,7 @@ public class Fashtable_sl
 		{
 		for ( int i = 0; i < numBins; i++ )
 			{
-			FashEntry_sl entry = entries[ i ];
+			HashEntry_so entry = entries[ i ];
 			while ( entry != null )
 				{
 				System.out.println( "HASH: " + entry.key + " " + entry.value );
@@ -293,46 +324,22 @@ public class Fashtable_sl
 			System.gc();
 
 			System.out.println( "-----" + z + "-----" );
-			Fashtable_sl f = new Fashtable_sl();
 
 			try
 				{
+				Hashtable h = new Hashtable();
+
 				long time = System.currentTimeMillis();
 				for ( int i = 0; i < z; i++ )
 					{
-					f.put( "01234567890123456789" + i, i );
+					h.put( "key" + i, "value" + i );
 					}
 
-				System.out.print( "FashtableL: " + ( System.currentTimeMillis() - time ) );
+				System.out.print( "Hashtable: " + ( System.currentTimeMillis() - time ) );
 				time = System.currentTimeMillis();
 				for ( int i = 0; i < z; i++ )
 					{
-					long v = f.get( "01234567890123456789" + i );
-
-					if ( v != i )
-						System.out.println( "ERRRROR" );
-					}
-				System.out.println( ":" + ( System.currentTimeMillis() - time ) );
-				}
-			catch ( Throwable theX )
-				{
-				Util.printX( "", theX );
-				}
-
-			Fashtable_so f2 = new Fashtable_so();
-			try
-				{
-				long time = System.currentTimeMillis();
-				for ( int i = 0; i < z; i++ )
-					{
-					f2.put( "key" + i, "value" + i );
-					}
-
-				System.out.print( "Fashtable: " + ( System.currentTimeMillis() - time ) );
-				time = System.currentTimeMillis();
-				for ( int i = 0; i < z; i++ )
-					{
-					Object v = f2.get( "key" + i );
+					Object v = h.get( "key" + i );
 
 					if ( !v.equals( "value" + i ) )
 						System.out.println( "ERRRROR" );
@@ -344,33 +351,31 @@ public class Fashtable_sl
 				Util.printX( "", theX );
 				}
 
-			/*
-						try
-							{
-							Hashtable h = new Hashtable();
+			Hashtable_so f = new Hashtable_so();
+			try
+				{
+				long time = System.currentTimeMillis();
+				for ( int i = 0; i < z; i++ )
+					{
+					f.put( "key" + i, "value" + i );
+					}
 
-							long time = System.currentTimeMillis();
-							for ( int i = 0; i < z; i++ )
-								{
-								h.put( "key" + i, "value" + i );
-								}
+				System.out.print( "Fashtable1: " + ( System.currentTimeMillis() - time ) );
+				time = System.currentTimeMillis();
+				for ( int i = 0; i < z; i++ )
+					{
+					Object v = f.get( "key" + i );
 
-							System.out.print( "Hashtable: " + ( System.currentTimeMillis() - time ) );
-							time = System.currentTimeMillis();
-							for ( int i = 0; i < z; i++ )
-								{
-								Object v = h.get( "key" + i );
+					if ( !v.equals( "value" + i ) )
+						System.out.println( "ERRRROR" );
+					}
+				System.out.println( ":" + ( System.currentTimeMillis() - time ) );
+				}
+			catch ( Throwable theX )
+				{
+				Util.printX( "", theX );
+				}
 
-								if ( !v.equals( "value" + i ) )
-									System.out.println( "ERRRROR" );
-								}
-							System.out.println( ":" + ( System.currentTimeMillis() - time ) );
-							}
-						catch ( Throwable theX )
-							{
-							Util.printX( "", theX );
-							}
-			*/
 			}
 		}
 	}

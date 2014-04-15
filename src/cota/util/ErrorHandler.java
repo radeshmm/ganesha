@@ -1,13 +1,13 @@
 package cota.util;
 
-import cota.util.Fashtable_so;
+import cota.util.Hashtable_so;
 
 
 
 // Simply responsible for emailing alerts when something goes wrong
 public class ErrorHandler
 	{
-	static Fashtable_so reported = new Fashtable_so();
+	static Hashtable_so reported = new Hashtable_so();
 	public static long startupTime = 0;
 
 

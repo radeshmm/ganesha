@@ -11,7 +11,7 @@ import cota.networking.ConnectionPool;
 import cota.networking.TCPServer;
 import cota.objectstore.HashStoreServer;
 import cota.util.ErrorHandler;
-import cota.util.Fashtable_so;
+import cota.util.Hashtable_so;
 import cota.util.LRU_lbt;
 import cota.util.LRU_lo;
 import cota.util.PairBL;
@@ -35,11 +35,20 @@ public class ObjectServer extends TCPServer
 	// Object requests
 	static final int PUT_OBJECT = 1;
 	static final int GET_OBJECT = 2;
-	static final int SET_INTEGER = 5;
-	static final int SET_LONG = 6;
-	static final int SET_STRING = 7;
-	static final int INCREMENT = 8;
-	static final int DECREMENT = 9;
+
+	// Strict Gobs
+	static final int SET_INTEGER_STRICT = 5;
+	static final int SET_LONG_STRICT = 6;
+	static final int SET_STRING_STRICT = 7;
+	static final int INCREMENT_STRICT = 8;
+	static final int DECREMENT_STRICT = 9;
+
+	// Non-strict Gobs
+	static final int SET_INTEGER = 10;
+	static final int SET_LONG = 11;
+	static final int SET_STRING = 12;
+	static final int INCREMENT = 13;
+	static final int DECREMENT = 14;
 
 	static final int NOT_FOUND = 50;
 	static final int SUCCESS = 99;
@@ -181,7 +190,7 @@ public class ObjectServer extends TCPServer
 		// This should not be called unless the default server is down
 		//		System.out.println( "Not using the cache!!!!: " + objectID );
 
-		Fashtable_so f = new Fashtable_so();
+		Hashtable_so f = new Hashtable_so();
 		long newestTimestamp = 0;
 		TriOLI newestT = null;
 
@@ -271,39 +280,50 @@ public class ObjectServer extends TCPServer
 		}
 
 
-	private void modifyObjectAttribute( int requestType, Gob gob, Message m ) throws Throwable
+	private byte[] modifyObjectAttribute( int requestType, byte[] objectBytes, Message m ) throws Throwable
 		{
 		switch ( requestType )
 			{
-			case SET_INTEGER:
+			case SET_INTEGER_STRICT:
 				{
+				StrictGob gob = new StrictGob( 0, objectBytes );// No need to specify gobType as we'll be explicitly modifying the attributes
+
 				int attribute = m.read4Bytes();
 				int n = m.read4Bytes();
 
 				gob.f.put( attribute, n );
-				}
-			break;
 
-			case SET_LONG:
+				return gob.returnBytes();
+				}
+
+			case SET_LONG_STRICT:
 				{
+				StrictGob gob = new StrictGob( 0, objectBytes );// No need to specify gobType as we'll be explicitly modifying the attributes
+
 				int attribute = m.read4Bytes();
 				long n = m.read8Bytes();
 
 				gob.f.put( attribute, n );
-				}
-			break;
 
-			case SET_STRING:
+				return gob.returnBytes();
+				}
+
+			case SET_STRING_STRICT:
 				{
+				StrictGob gob = new StrictGob( 0, objectBytes );// No need to specify gobType as we'll be explicitly modifying the attributes
+
 				int attribute = m.read4Bytes();
 				String s = m.readString();
 
 				gob.f.put( attribute, s );
-				}
-			break;
 
-			case INCREMENT:
+				return gob.returnBytes();
+				}
+
+			case INCREMENT_STRICT:
 				{
+				StrictGob gob = new StrictGob( 0, objectBytes );// No need to specify gobType as we'll be explicitly modifying the attributes
+
 				int attribute = m.read4Bytes();
 
 				int v = 0;
@@ -317,19 +337,113 @@ public class ObjectServer extends TCPServer
 
 				v++;
 				gob.f.put( attribute, v );
-				}
-			break;
 
-			case DECREMENT:
+				return gob.returnBytes();
+				}
+
+			case DECREMENT_STRICT:
 				{
+				StrictGob gob = new StrictGob( 0, objectBytes );// No need to specify gobType as we'll be explicitly modifying the attributes
+
 				int attribute = m.read4Bytes();
 
 				int v = (Integer) gob.f.get( attribute );
 				v--;
 				gob.f.put( attribute, v );
+
+				return gob.returnBytes();
 				}
-			break;
+
+			case SET_INTEGER:
+				{
+				Gob gob = new Gob( objectBytes );
+
+				String attribute = m.readString();
+				int n = m.read4Bytes();
+
+				byte[] bytes = new byte[4];
+				bytes[ 0 ] = (byte) ( ( n >> 24 ) & 0xFF );
+				bytes[ 1 ] = (byte) ( ( n >> 16 ) & 0xFF );
+				bytes[ 2 ] = (byte) ( ( n >> 8 ) & 0xFF );
+				bytes[ 3 ] = (byte) ( ( n ) & 0xFF );
+
+				gob.f.put( attribute, bytes );
+
+				return gob.returnBytes();
+				}
+
+			case SET_LONG:
+				{
+				Gob gob = new Gob( objectBytes );
+
+				String attribute = m.readString();
+				long n = m.read8Bytes();
+
+				byte[] bytes = new byte[8];
+				bytes[ 0 ] = (byte) ( ( n >> 56 ) & 0xFF );
+				bytes[ 1 ] = (byte) ( ( n >> 48 ) & 0xFF );
+				bytes[ 2 ] = (byte) ( ( n >> 40 ) & 0xFF );
+				bytes[ 3 ] = (byte) ( ( n >> 32 ) & 0xFF );
+				bytes[ 4 ] = (byte) ( ( n >> 24 ) & 0xFF );
+				bytes[ 5 ] = (byte) ( ( n >> 16 ) & 0xFF );
+				bytes[ 6 ] = (byte) ( ( n >> 8 ) & 0xFF );
+				bytes[ 7 ] = (byte) ( ( n ) & 0xFF );
+
+				gob.f.put( attribute, bytes );
+
+				return gob.returnBytes();
+				}
+
+			case SET_STRING:
+				{
+				Gob gob = new Gob( objectBytes );
+
+				String attribute = m.readString();
+				String s = m.readString();
+
+				gob.f.put( attribute, s.getBytes( "UTF-8" ) );
+
+				return gob.returnBytes();
+				}
+
+			case INCREMENT:
+				{
+				Gob gob = new Gob( objectBytes );
+
+				String attribute = m.readString();
+				int v = gob.getInt( attribute ) + 1;
+
+				byte[] bytes = new byte[4];
+				bytes[ 0 ] = (byte) ( ( v >> 24 ) & 0xFF );
+				bytes[ 1 ] = (byte) ( ( v >> 16 ) & 0xFF );
+				bytes[ 2 ] = (byte) ( ( v >> 8 ) & 0xFF );
+				bytes[ 3 ] = (byte) ( ( v ) & 0xFF );
+
+				gob.f.put( attribute, bytes );
+
+				return gob.returnBytes();
+				}
+
+			case DECREMENT:
+				{
+				Gob gob = new Gob( objectBytes );
+
+				String attribute = m.readString();
+				int v = gob.getInt( attribute ) - 1;
+
+				byte[] bytes = new byte[4];
+				bytes[ 0 ] = (byte) ( ( v >> 24 ) & 0xFF );
+				bytes[ 1 ] = (byte) ( ( v >> 16 ) & 0xFF );
+				bytes[ 2 ] = (byte) ( ( v >> 8 ) & 0xFF );
+				bytes[ 3 ] = (byte) ( ( v ) & 0xFF );
+
+				gob.f.put( attribute, bytes );
+
+				return gob.returnBytes();
+				}
 			}
+
+		return null;
 		}
 
 
@@ -364,19 +478,8 @@ public class ObjectServer extends TCPServer
 				default: // attribute modification
 					{
 					bytes = getObject( objectID );
+					bytes = modifyObjectAttribute( requestType, bytes, m );
 
-					// Modify the object
-					// No need to specify gobType as we'll be explicitly modifying the attributes
-					Gob gob = new Gob( 0, bytes );
-
-					byte[] bytes0 = gob.returnBytes();
-					modifyObjectAttribute( requestType, gob, m );
-
-					bytes = gob.returnBytes();
-
-					PairBL p = getObjectWithTimestamp( objectID, false );
-
-					//					System.out.println( "PRE/POST LENGTH: " + objectID + "\t" + requestType + "\t" + bytes0.length + "\t" + bytes.length + "\t" + p.y );
 					r.writeBytes( bytes );
 					}
 				break;
