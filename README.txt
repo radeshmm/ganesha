@@ -17,7 +17,7 @@
    
    Support for Non-Homogeneous Servers - storage/load is based proportionally on individual server storage capacity and allows clusters to be built of machines with mixed storage capacities.
    
-   Lists - built in synchronized support for storing lists of object ids as well as inserting sorted ids based on a given developer-defined metric. 
+   Lists - built in synchronized support for storing lists of objects/ids as well as inserting sorted objects based on a given developer-defined metric. 
    
    Object Locking/Synchronization- built in object locking and synchronization keeps data consistent and prevents data corruption.
    
@@ -31,12 +31,13 @@
 
 ----- INSTALLATION (Linux) -----
 
-# On each server, download the recent jar and create the config directory and ip_address file
+# On each server, download the recent jar
    sudo yum install git
 
    git clone https://github.com/danielcota/ganesha
    cd ganesha
    
+# Create the config directory and ip_address file   
    mkdir config
    /sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}' > config/ip_address
 
@@ -45,7 +46,6 @@
 
 
 # On the first machine, edit config/whitelisted_ips to contain the IPs of other machines that will be added
-# 'cat config/ip_address' on the other servers to see what IP addresses they have
 # One per line, for example:
    10.63.16.13
    10.147.3.198
@@ -61,10 +61,11 @@
 # On additional machines, join the cluster using a call similar to:
    java -cp ganesha_all.jar cota.ganesha.MapServer join 10.146.234.76 5
 
-# The last number specifies the time delay in minutes before the new server begins storing data 
-# on the cluster (5 minutes in the example above).
-# Until that time, the previous set of servers from the map will be used.
-# Note that the IP can refer to any server in the cluster (though it will need the whitelisted_ips file)
+The last number specifies the time delay in minutes before the new server begins storing data on the cluster (5 minutes in the example above).
+
+Until that time, the previous set of servers from the map will be used.
+
+Note that the IP can refer to any server in the cluster (though it will need the whitelisted_ips file)
 
 # Don't forget to start the newly added servers
    java -cp ganesha_all.jar -Xms6G -Xmx6G cota.ganesha.Ganesha
