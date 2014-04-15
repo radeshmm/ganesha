@@ -67,6 +67,7 @@ Until that time, the previous set of servers from the map will be used.
 
 Note that the IP can refer to any server in the cluster (though it will need the whitelisted_ips file)
 
+
 # Don't forget to start the newly added servers
    java -cp ganesha_all.jar -Xms6G -Xmx6G cota.ganesha.Ganesha
 
