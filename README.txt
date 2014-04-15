@@ -4,15 +4,14 @@
 
    It requires no external libraries and provides synchronized binary, object/attribute, and list based storage across a self-healing redundant cluster of server nodes. All required source is provided here.
 
-
-
+	
 ----- FEATURES -----
 
    Replication of Data - data is replicated automatically across as many servers as you want it to be.
 
    Auto-Healing Data - any time a piece of data is accessed, any server that doesn't have the most recent copy of the data will be updated.  Also, servers keep logs of failed data updates (for example if another server was temporarily down) so that the update can be sent later on.
    
-   Built in Object Support - in addition to strictly storing bytes, a robust object architecture is in place which provides a built in mechanism for storing and retrieving lists, ints, longs, bytes, and strings from and to objects. Objects and lists can be nested as needed.
+   Built in Object Support - in addition to strictly storing bytes, a robust object architecture is in place which provides a built in mechanism for storing and retrieving lists, ints, longs, bytes, other objects, and strings from and to objects.
 
    Checksum/Timestamp Consistency Checks - both checksums and timestamps are used to ensure that all relevant servers have the correct copy of a given piece of data.   
    
@@ -228,6 +227,44 @@ Test via TestGob2 class
    java -cp ganesha_all.jar cota.ganeshatest.TestGob2 print
 
    
+
+---- NESTED OBJECTS AND LISTS -----
+Objects and lists can be nested as need to create complex data structures.
+
+Simple example:
+
+   // Store
+   Gob sun = new Gob( "universe", "stars", "the sun" );
+
+   Gob earth = new Gob( "universe", "planets", "earth" );
+   Gob venus = new Gob( "universe", "planets", "venus" );
+
+   sun.append( "planets", earth );
+   sun.append( "planets", venus );
+
+   earth.put( "star", sun );
+   venus.put( "star", sun );
+
+
+   // Retrieve
+   Gob earth2 = new Gob( "universe", "planets", "earth" );
+   Gob sun2 = earth2.getGob( "star" );
+
+   Queue planets = sun2.getGobs( "planets" );
+   for ( int i = 0; i < planets.size(); i++ )
+      {
+      Gob planet = (Gob) planets.elementAt( i );
+
+      System.out.println( planet.getString( "name" ) + " orbits around " + sun2.getString( "name" ) );
+      }
+
+
+Test via TestGob2 class
+   java -cp ganesha_all.jar cota.ganeshatest.TestGob2 planets
+
+   java -cp ganesha_all.jar cota.ganeshatest.TestGob2 orbits
+
+
 
 ----- RUNNING ON AMAZON EC2 CLOUD -----
 

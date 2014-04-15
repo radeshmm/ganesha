@@ -199,6 +199,40 @@ public class Gob
 		}
 
 
+	public Gob getGob( String attribute ) throws Throwable
+		{
+		long id = getLong( attribute );
+		if ( id == 0 )
+			return null;
+
+		return new Gob( id );
+		}
+
+
+	public Queue getGobs( String attribute ) throws Throwable
+		{
+		long id = getLong( attribute );
+		if ( id == 0 )
+			return new Queue();
+
+		byte[] bytes = Ganesha.getBytes( id );
+		if ( bytes == null )
+			return null;
+
+		Queue ids = Ganesha.returnIDs( bytes );
+
+		Queue gobs = new Queue();
+		for ( int i = 0; i < ids.size(); i++ )
+			{
+			long gobID = (Long) ids.elementAt( i );
+
+			gobs.addObject( new Gob( gobID ) );
+			}
+
+		return gobs;
+		}
+
+
 	public Queue getIDs( String attribute ) throws Throwable
 		{
 		long id = getLong( attribute );
@@ -275,6 +309,14 @@ public class Gob
 	public void put( String attribute, long v ) throws Throwable
 		{
 		byte[] newBytes = Ganesha.putLong( id, attribute, v );
+
+		init( newBytes );
+		}
+
+
+	public void put( String attribute, Gob gob ) throws Throwable
+		{
+		byte[] newBytes = Ganesha.putLong( id, attribute, gob.id );
 
 		init( newBytes );
 		}
@@ -423,6 +465,12 @@ public class Gob
 		}
 
 
+	public boolean exists( String attribute, Gob gob ) throws Throwable
+		{
+		return exists( attribute, gob.id );
+		}
+
+
 	public void insertID( String attribute, long newObjectID, int metric, int max ) throws Throwable
 		{
 		long id = getLong( attribute );
@@ -434,6 +482,12 @@ public class Gob
 			}
 
 		Ganesha.insertID( id, newObjectID, metric, max );
+		}
+
+
+	public void insert( String attribute, Gob gob, int metric, int max ) throws Throwable
+		{
+		insert( attribute, gob, metric, max );
 		}
 
 
@@ -451,6 +505,12 @@ public class Gob
 		}
 
 
+	public void append( String attribute, Gob gob ) throws Throwable
+		{
+		appendID( attribute, gob.id );
+		}
+
+
 	public void prependID( String attribute, long newObjectID ) throws Throwable
 		{
 		long id = getLong( attribute );
@@ -462,6 +522,12 @@ public class Gob
 			}
 
 		Ganesha.prependID( id, newObjectID );
+		}
+
+
+	public void prepend( String attribute, Gob gob ) throws Throwable
+		{
+		prependID( attribute, gob.id );
 		}
 
 
@@ -493,6 +559,12 @@ public class Gob
 		}
 
 
+	public void appendWithMax( String attribute, Gob gob, int max ) throws Throwable
+		{
+		appendIDWithMax( attribute, gob.id, max );
+		}
+
+
 	public void removeID( String attribute, long newObjectID ) throws Throwable
 		{
 		long id = getLong( attribute );
@@ -500,6 +572,12 @@ public class Gob
 			return;
 
 		Ganesha.removeID( id, newObjectID );
+		}
+
+
+	public void remove( String attribute, Gob gob ) throws Throwable
+		{
+		removeID( attribute, gob.id );
 		}
 
 
@@ -513,6 +591,12 @@ public class Gob
 		}
 
 
+	public void undelete( String attribute, Gob gob ) throws Throwable
+		{
+		undeleteID( attribute, gob.id );
+		}
+
+
 	public void removeOrderedID( String attribute, long idToRemove ) throws Throwable
 		{
 		long id = getLong( attribute );
@@ -520,6 +604,12 @@ public class Gob
 			return;
 
 		Ganesha.removeOrderedID( id, idToRemove );
+		}
+
+
+	public void removeOrdered( String attribute, Gob gob ) throws Throwable
+		{
+		removeOrderedID( attribute, gob.id );
 		}
 
 

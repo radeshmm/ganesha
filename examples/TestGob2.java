@@ -2,6 +2,7 @@ package cota.ganeshatest;
 
 import cota.ganesha.Gob;
 import cota.ganesha.MapServer;
+import cota.util.Queue;
 
 
 public class TestGob2
@@ -35,7 +36,6 @@ public class TestGob2
 
 				// Modify
 				sun.put( "color", "orange" );
-				otherSun.put( "weight", 99999999999999L );
 
 				System.out.println( "Objects stored" );
 				}
@@ -48,6 +48,38 @@ public class TestGob2
 
 				print( sun2 );
 				print( otherSun2 );
+				}
+
+			if ( args[ 0 ].equals( "planets" ) )
+				{
+				// Store
+				Gob sun = new Gob( "universe", "stars", "the sun" );
+
+				Gob earth = new Gob( "universe", "planets", "earth" );
+				Gob venus = new Gob( "universe", "planets", "venus" );
+
+				sun.append( "planets", earth );
+				sun.append( "planets", venus );
+
+				earth.put( "star", sun );
+				venus.put( "star", sun );
+
+				System.out.println( "Objects stored" );
+				}
+
+			if ( args[ 0 ].equals( "orbits" ) )
+				{
+				// Retrieve
+				Gob earth2 = new Gob( "universe", "planets", "earth" );
+				Gob sun2 = earth2.getGob( "star" );
+
+				Queue planets = sun2.getGobs( "planets" );
+				for ( int i = 0; i < planets.size(); i++ )
+					{
+					Gob planet = (Gob) planets.elementAt( i );
+
+					System.out.println( planet.getString( "name" ) + " orbits around " + sun2.getString( "name" ) );
+					}
 				}
 			}
 		catch ( Throwable theX )
