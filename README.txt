@@ -160,6 +160,8 @@ Objects (known as Gobs, short for Ganesha Objects) can be accessed in two ways:
       
 All objects contain attributes (which allow specific pieces of data to be accessed from within an object).  These attributes are referred to by name (further details can be found in Gob.java).
 
+Example:   
+
    // Create the objects
    Gob cloud = new Gob();
    cloud.put( "name", "cloud" );
@@ -188,14 +190,15 @@ Test via TestGob class
    
 ----- OBJECTS ACCESSED BY A NAME-BASED KEY -----
 
-ALL objects are stored by long ids, but it is sometimes necessary to store them by names as well. 
+ALL objects are stored by long ids, but it is sometimes necessary to refer to them by names as well. 
    
 Named objects employ a workspace/table/name mechanism to generate a unique key. The workspaces allow the same Gob classes to be used with different applications.  For example you might have Friendland/User/Daniel object and ChatWorld/User/Daniel object. These two "keys" refer to completely different objects contained within two different workspaces.
 
-Named objects (like all data stored in Ganesha) have a corresponding long id.  You can find it using the call:
+You can find the long id corresponding to a named object using the following:
    long id = Translator.translate( workspace, table, name );
    
-Name-based objects can be used as follows:   
+
+Example:   
 
    // Store the objects by name
    Gob sun = new Gob( "galaxy", "stars", "sun" );
@@ -210,9 +213,13 @@ Name-based objects can be used as follows:
 	sun.put( "color", "orange" );
    
 
-	// Retrieve by name
+	// Retrieve by name and print
 	Gob sun2 = new Gob( "galaxy", "stars", "sun" );
-	Gob otherSun2 = new Gob( "other_galaxy", "stars", "sun" );
+
+	System.out.println( "id: " + sun2.id );
+	System.out.println( "name: " + sun2.getString( "name" ) );
+	System.out.println( "color: " + sun2.getString( "color" ) );
+	System.out.println( "weight: " + sun2.getLong( "weight" ) );
 
 
 Test via TestGob2 class
