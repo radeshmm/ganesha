@@ -210,17 +210,17 @@ Example:
    otherSun.put( "color", "red" );
    otherSun.put( "weight", 10000000000L );
 
-	// Modifications overwrite as expected
-	sun.put( "color", "orange" );
+   // Modifications overwrite as expected
+   sun.put( "color", "orange" );
    
 
-	// Retrieve by name and print
-	Gob sun2 = new Gob( "galaxy", "stars", "sun" );
+   // Retrieve by name and print
+   Gob sun2 = new Gob( "galaxy", "stars", "sun" );
 
-	System.out.println( "id: " + sun2.id );
-	System.out.println( "name: " + sun2.getString( "name" ) );
-	System.out.println( "color: " + sun2.getString( "color" ) );
-	System.out.println( "weight: " + sun2.getLong( "weight" ) );
+   System.out.println( "id: " + sun2.id );
+   System.out.println( "name: " + sun2.getString( "name" ) );
+   System.out.println( "color: " + sun2.getString( "color" ) );
+   System.out.println( "weight: " + sun2.getLong( "weight" ) );
 
 
 Test via TestGob2 class
