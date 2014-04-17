@@ -71,23 +71,32 @@ public class TCPServer
 
 	public ServerSocket createSocket( int port ) throws Throwable
 		{
-		return new ServerSocket( port );
+		try
+			{
+			return new ServerSocket( port );
+			}
+		catch ( Throwable theX )
+			{
+			System.out.println( "ERROR CREATING SERVER: " + serverName + "\t" + port );
+
+			throw theX;
+			}
 		}
 
 
-	public void handleRequest( Socket s, InStream in, OutStream out ) throws Throwable
+	protected void handleRequest( Socket s, InStream in, OutStream out ) throws Throwable
 		{
 		throw new Throwable( "handleRequest( s, in, out ) NOT IMPLEMENTED" );
 		}
 
 
-	public void handleRequest( Socket s, InStream in, OutStream out, InStream webServiceIn, OutStream webServiceOut ) throws Throwable
+	protected void handleRequest( Socket s, InStream in, OutStream out, InStream webServiceIn, OutStream webServiceOut ) throws Throwable
 		{
 		throw new Throwable( "handleRequest( s, in, out, webServiceIn, webServiceOut ) NOT IMPLEMENTED" );
 		}
 
 
-	public void handleError( Throwable errorX, OutStream out ) throws Throwable
+	protected void handleError( Throwable errorX, OutStream out ) throws Throwable
 		{
 		}
 	}

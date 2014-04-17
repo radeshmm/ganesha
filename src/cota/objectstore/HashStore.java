@@ -322,7 +322,7 @@ public class HashStore extends ObjectStore
 		}
 
 
-	public Object returnLock( int bucketNum )
+	private Object returnLock( int bucketNum )
 		{
 		Object lock = null;
 

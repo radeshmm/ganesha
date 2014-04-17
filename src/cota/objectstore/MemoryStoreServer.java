@@ -60,7 +60,7 @@ public class MemoryStoreServer extends TCPServer
 		}
 
 
-	public void rebuildIP0( String ip ) throws Throwable
+	private void rebuildIP0( String ip ) throws Throwable
 		{
 		// Go through the cache and and find objects owned by the given ip
 		Queue q = new Queue();
@@ -112,7 +112,7 @@ public class MemoryStoreServer extends TCPServer
 		}
 
 
-	public Message handleRequest( int requestType, Message m ) throws Throwable
+	protected Message handleRequest( int requestType, Message m ) throws Throwable
 		{
 		Message r = new Message();
 
@@ -197,7 +197,7 @@ public class MemoryStoreServer extends TCPServer
 		}
 
 
-	public void handleRequest( Socket s, InStream in, OutStream out ) throws Throwable
+	protected void handleRequest( Socket s, InStream in, OutStream out ) throws Throwable
 		{
 		InetAddress address = s.getInetAddress();
 		String ip0 = address.getHostAddress();

@@ -12,7 +12,6 @@ import cota.io.Message;
 import cota.io.OutStream;
 import cota.networking.TCPServer;
 import cota.objectstore.HashStoreServer;
-import cota.util.ErrorHandler;
 import cota.util.HashEntry_so;
 import cota.util.Hashtable_si;
 import cota.util.Hashtable_so;
